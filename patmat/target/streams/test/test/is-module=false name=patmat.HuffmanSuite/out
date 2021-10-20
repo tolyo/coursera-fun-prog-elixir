@@ -1,0 +1,17 @@
+[0m[[0minfo[0m] [0m[32mHuffmanSuite:[0m[0m
+[0m[[0minfo[0m] [0m[32m- weight of a larger tree[0m[0m
+[0m[[0minfo[0m] [0m[32m- chars of a larger tree[0m[0m
+[0m[[0minfo[0m] [0m[32m- string2chars("hello, world")[0m[0m
+[0m[[0minfo[0m] [0m[32m- times[0m[0m
+[0m[[0minfo[0m] [0m[32m- makeOrderedLeafList for some frequency table[0m[0m
+[0m[[0minfo[0m] [0m[32m- singleton[0m[0m
+[0m[[0minfo[0m] [0m[32m- combine of some leaf list[0m[0m
+[0m[[0minfo[0m] [0m[32m- until(singleton, combine)(trees)[0m[0m
+[0m[[0minfo[0m] [0m[32m- create code tree[0m[0m
+[0m[[0minfo[0m] [0m[32m- decode[0m[0m
+[0m[[0minfo[0m] [0m[32m- contains[0m[0m
+[0m[[0minfo[0m] [0m[32m- decode and encode a very short text should be identity[0m[0m
+[0m[[0minfo[0m] [0m[32m- decode and quick a very short text should be identity[0m[0m
+[0m[[0minfo[0m] [0m[32m- codebits[0m[0m
+[0m[[0minfo[0m] [0m[32m- convert[0m[0m
+[0m[[0minfo[0m] [0m[32m- merge[0m[0m

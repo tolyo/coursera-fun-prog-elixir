@@ -1,1 +1,2 @@
-# coursera-fun-prog-elixir
+CourseraFunProg
+===============
