@@ -15,7 +15,8 @@ defmodule Lists do
     solution.
   """
   @spec sum([integer()]) :: integer()
-  def sum(xs), do: raise(UndefinedFunctionError)
+  def sum([]), do: 0
+  def sum([h | t]), do: h + sum(t)
 
   @doc """
    This method returns the largest element in a list of integers. If the
@@ -27,5 +28,12 @@ defmodule Lists do
    constructs. You might need to define an auxiliary method.
   """
   @spec max([integer()]) :: integer()
-  def max(xs), do: raise(UndefinedFunctionError)
+  def max([]), do: raise(ArgumentError)
+
+  def max([h | t]) do
+    case Enum.empty?(t) do
+      true -> h
+      false -> max(h, max(t))
+    end
+  end
 end
