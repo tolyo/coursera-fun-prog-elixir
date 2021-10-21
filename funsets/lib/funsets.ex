@@ -19,34 +19,34 @@ defmodule Funsets do
     Returns the set of the one given element.
   """
   @spec singleton_set(integer()) :: set()
-  def singleton_set(x), do: raise(UndefinedFunctionError)
+  def singleton_set(x), do: fn y -> x == y end
 
   @doc """
     Returns the union of the two given sets,
     the sets of all elements that are in either `s` or `t`.
   """
   @spec union(set(), set()) :: set()
-  def union(s, t), do: raise(UndefinedFunctionError)
+  def union(s, t), do: fn v -> contains(s, v) || contains(t, v) end
 
   @doc """
     Returns the intersection of the two given sets,
     the set of all elements that are both in `s` and `t`.
   """
   @spec intersect(set(), set()) :: set()
-  def intersect(s, t), do: raise(UndefinedFunctionError)
+  def intersect(s, t), do: fn v -> contains(s, v) && contains(t, v) end
 
   @doc """
     Returns the difference of the two given sets,
     the set of all elements of `s` that are not in `t`.
   """
   @spec diff(set(), set()) :: set()
-  def diff(s, t), do: raise(UndefinedFunctionError)
+  def diff(s, t), do: fn v -> contains(s, v) && !contains(t, v) end
 
   @doc """
     Returns the subset of `s` for which `p` holds.
   """
   @spec filter(set(), (integer() -> boolean())) :: set()
-  def filter(s, p), do: raise(UndefinedFunctionError)
+  def filter(s, p), do: fn v -> p.(v) && contains(s, v) end
 
   @doc """
     The bounds for `forall` and `exists` are +/- 1000.
@@ -58,7 +58,16 @@ defmodule Funsets do
   """
   @spec forall(set(), (integer() -> boolean())) :: boolean()
   def forall(s, p) do
-    raise UndefinedFunctionError
+    forall_helper(s, p, 0)
+  end
+
+  defp forall_helper(_, _, @bound), do: true
+
+  defp forall_helper(s, p, acc) do
+    case {contains(s, acc), p.(acc)} do
+      {true, false} -> false
+      _ -> forall_helper(s, p, acc + 1)
+    end
   end
 
   @doc """
@@ -66,13 +75,13 @@ defmodule Funsets do
     that satisfies `p`.
   """
   @spec exists(set(), (integer() -> boolean())) :: boolean()
-  def exists(s, p), do: raise(UndefinedFunctionError)
+  def exists(s, p), do: !forall(s, fn x -> !p.(x) end)
 
   @doc """
     Returns a set transformed by applying `f` to each element of `s`.
   """
   @spec map(set(), (integer() -> integer())) :: set()
-  def map(s, f), do: raise(UndefinedFunctionError)
+  def map(s, f), do: fn v -> exists(s, fn x -> v == f.(x) end) end
 
   @doc """
    Displays the contents of a set
