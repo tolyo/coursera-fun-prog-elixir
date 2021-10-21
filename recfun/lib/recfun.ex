@@ -7,9 +7,11 @@ defmodule Recfun do
   def main() do
     IO.puts("Pascal's Triangle")
 
-    for row <- 0..10,
-        col <- 0..row do
-      IO.puts(pascal(col, row) + " ")
+    for row <- 0..10 do
+      for col <- 0..row do
+        IO.write("#{pascal(col, row)} ")
+      end
+
       IO.puts("\n")
     end
   end
