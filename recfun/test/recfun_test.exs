@@ -29,11 +29,11 @@ defmodule RecfunTest do
     end
 
     test "balance: ':-)' is unbalanced" do
-      assert !":-)" |> String.to_charlist() |> balance()
+      assert ":-)" |> String.to_charlist() |> balance() == false
     end
 
     test "balance: counting is not enough" do
-      assert !"())(" |> String.to_charlist() |> balance()
+      assert "())(" |> String.to_charlist() |> balance() == false
     end
   end
 
