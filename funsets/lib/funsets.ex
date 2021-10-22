@@ -79,6 +79,13 @@ defmodule Funsets do
   """
   @spec toString(set()) :: binary()
   def toString(s) do
+    x =
+      -@bound..@bound
+      |> Enum.to_list()
+      |> Enum.filter(fn x -> contains(s, x) end)
+      |> Enum.join(",")
+
+    "{#{x}}"
   end
 
   @doc """
