@@ -74,15 +74,6 @@ defmodule Funsets do
     end
   end
 
-  defp forall_helper(_, _, @bound), do: true
-
-  defp forall_helper(s, p, acc) do
-    case {contains(s, acc), p.(acc)} do
-      {true, false} -> false
-      _ -> forall_helper(s, p, acc + 1)
-    end
-  end
-
   @doc """
     Returns whether there exists a bounded integer within `s`
     that satisfies `p`.
