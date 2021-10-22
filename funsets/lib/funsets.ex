@@ -58,7 +58,20 @@ defmodule Funsets do
   """
   @spec forall(set(), (integer() -> boolean())) :: boolean()
   def forall(s, p) do
-    forall_helper(s, p, 0)
+    iter(s, p, -@bound)
+  end
+
+  defp iter(s, p, a) do
+    cond do
+      contains(s, a) && p.(a) == false ->
+        false
+
+      a > @bound ->
+        true
+
+      true ->
+        iter(s, p, a + 1)
+    end
   end
 
   defp forall_helper(_, _, @bound), do: true
