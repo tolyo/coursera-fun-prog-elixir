@@ -117,7 +117,9 @@ defmodule TweetSet do
   @spec mostRetweeted(TweetSet.t()) :: Tweet.t()
   def mostRetweeted(set) do
     case set do
-      Empty -> raise ArgumentError
+      Empty ->
+        raise ArgumentError
+
       %NonEmpty{} ->
         case filter(set, fn x -> x.retweets > set.elem.retweets end) do
           Empty -> set.elem
@@ -134,9 +136,10 @@ defmodule TweetSet do
   @spec descendingByRetweet(TweetSet.t()) :: [Tweet.t()]
   def descendingByRetweet(set) do
     trending = mostRetweeted(set)
+
     case remove(set, trending) do
       Empty -> trending
-      val -> [trending|descendingByRetweet(val)]
+      val -> [trending | descendingByRetweet(val)]
     end
   end
 
@@ -182,9 +185,15 @@ defmodule TweetSet do
 
   @spec filter_trending([String.t()], TweetSet.t(), TweetSet.t()) :: TweetSet.t()
   def filter_trending([], tweets, acc), do: acc
-  def filter_trending([h|t], tweets, acc) do
-    filter_trending(t, tweets, union(acc, filter(tweets, fn x -> String.contains?(x.text, h) end)))
+
+  def filter_trending([h | t], tweets, acc) do
+    filter_trending(
+      t,
+      tweets,
+      union(acc, filter(tweets, fn x -> String.contains?(x.text, h) end))
+    )
   end
+
   @spec googleTweets(TweetSet.t()) :: TweetSet.t()
   def googleTweets(data) do
     filter_trending(@google, data, Empty)
@@ -202,6 +211,7 @@ defmodule TweetSet do
   @spec trending() :: [Tweet.t()]
   def trending() do
     data = TweetData.set()
+
     googleTweets(data)
     |> union(appleTweets(data))
     |> descendingByRetweet()

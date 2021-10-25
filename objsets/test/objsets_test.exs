@@ -57,7 +57,7 @@ defmodule ObjsetsTest do
   end
 
   test "descending: set5", c do
-    [h|t] = trends = descendingByRetweet(c.set5)
+    [h | t] = trends = descendingByRetweet(c.set5)
     assert trends != []
     assert [h.user == "c" || h.user == "d"]
   end
