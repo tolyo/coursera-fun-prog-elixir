@@ -75,7 +75,7 @@ defmodule TweetSet do
 
   @spec filter(TweetSet.t(), (x: Tweet.t() -> boolean())) :: TweetSet.t()
   def filter(set, p) do
-    raise(UndefinedFunctionError)
+    filterAcc(set, p, Empty)
   end
 
   @doc """
@@ -84,15 +84,30 @@ defmodule TweetSet do
   """
   @spec filterAcc(TweetSet.t(), (x: Tweet.t() -> boolean()), TweetSet.t()) :: TweetSet.t()
   def filterAcc(set, p, acc) do
-    raise(UndefinedFunctionError)
+    case set do
+      TweetSet.Empty ->
+        acc
+
+      %TweetSet.NonEmpty{} ->
+        case p.(set.elem) do
+          true ->
+            filterAcc(set.right, p, filterAcc(set.left, p, incl(acc, set.elem)))
+
+          false ->
+            filterAcc(set.right, p, filterAcc(set.left, p, acc))
+        end
+    end
   end
 
   @doc """
     Returns a new `TweetSet` that is the union of `TweetSet`s `x` and `y`.
   """
   @spec union(TweetSet.t(), TweetSet.t()) :: TweetSet.t()
-  def union(x, y) do
-    raise(UndefinedFunctionError)
+  def union(Empty, y), do: y
+  def union(x, Empty), do: x
+
+  def union(%NonEmpty{} = x, %NonEmpty{} = y) do
+    union(x.left, union(x.right, incl(y, x.elem)))
   end
 
   @doc """
@@ -101,7 +116,14 @@ defmodule TweetSet do
   """
   @spec mostRetweeted(TweetSet.t()) :: Tweet.t()
   def mostRetweeted(set) do
-    raise(UndefinedFunctionError)
+    case set do
+      Empty -> raise ArgumentError
+      %NonEmpty{} ->
+        case filter(set, fn x -> x.retweets > set.elem.retweets end) do
+          Empty -> set.elem
+          result -> mostRetweeted(result)
+        end
+    end
   end
 
   @doc """
@@ -111,7 +133,11 @@ defmodule TweetSet do
   """
   @spec descendingByRetweet(TweetSet.t()) :: [Tweet.t()]
   def descendingByRetweet(set) do
-    raise(UndefinedFunctionError)
+    trending = mostRetweeted(set)
+    case remove(set, trending) do
+      Empty -> trending
+      val -> [trending|descendingByRetweet(val)]
+    end
   end
 
   # The following methods are already implemented
@@ -135,7 +161,7 @@ defmodule TweetSet do
     end
   end
 
-  def remove(Empty, tweet), do: Empty
+  def remove(Empty, _tweet), do: Empty
 
   def remove(%NonEmpty{} = set, x) do
     cond do
@@ -149,5 +175,35 @@ defmodule TweetSet do
 
   def foreach(%NonEmpty{} = set, f) do
     new(f.(set.elem), foreach(set.left, f), foreach(set.right, f))
+  end
+
+  @google ["android", "Android", "galaxy", "Galaxy", "nexus", "Nexus"]
+  @apple ["ios", "iOS", "iphone", "iPhone", "ipad", "iPad"]
+
+  @spec filter_trending([String.t()], TweetSet.t(), TweetSet.t()) :: TweetSet.t()
+  def filter_trending([], tweets, acc), do: acc
+  def filter_trending([h|t], tweets, acc) do
+    filter_trending(t, tweets, union(acc, filter(tweets, fn x -> String.contains?(x.text, h) end)))
+  end
+  @spec googleTweets(TweetSet.t()) :: TweetSet.t()
+  def googleTweets(data) do
+    filter_trending(@google, data, Empty)
+  end
+
+  @spec appleTweets(TweetSet.t()) :: TweetSet.t()
+  def appleTweets(data) do
+    filter_trending(@apple, data, Empty)
+  end
+
+  @doc """
+    A list of all tweets mentioning a keyword from either apple or google,
+    sorted by the number of retweets.
+  """
+  @spec trending() :: [Tweet.t()]
+  def trending() do
+    data = TweetData.set()
+    googleTweets(data)
+    |> union(appleTweets(data))
+    |> descendingByRetweet()
   end
 end
