@@ -59,10 +59,19 @@ defmodule TweetSet do
     defstruct user: nil,
               text: nil,
               retweets: nil
+
+    @spec new(String.t(), String.t(), non_neg_integer()) :: Tweet.t()
+    def new(user, text, retweets), do: %Tweet{user: user, text: text, retweets: retweets}
   end
+
+  @spec new(Tweet.t()) :: NonEmpty.t()
+  def new(elem), do: %NonEmpty{elem: elem, left: Empty, right: Empty}
 
   @spec new(Tweet.t(), TweetSet.t(), TweetSet.t()) :: NonEmpty.t()
   def new(elem, left, right), do: %NonEmpty{elem: elem, left: left, right: right}
+
+  def size(Empty), do: 0
+  def size(%NonEmpty{left: left, right: right}), do: 1 + size(left) + size(right)
 
   @spec filter(TweetSet.t(), (x: Tweet.t() -> boolean())) :: TweetSet.t()
   def filter(set, p) do
