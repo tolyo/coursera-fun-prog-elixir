@@ -14,6 +14,7 @@ defmodule ObjsetsTest do
     d = Tweet.new("d", "d body", 29)
     set4c = incl(set3, c)
     set4d = incl(set3, d)
+    set5 = incl(set4c, d)
 
     [
       set1: set1,
@@ -22,7 +23,8 @@ defmodule ObjsetsTest do
       c: c,
       d: d,
       set4c: set4c,
-      set4d: set4d
+      set4d: set4d,
+      set5: set5
     ]
   end
 
@@ -50,16 +52,13 @@ defmodule ObjsetsTest do
     assert size(union(c.set1, c.set5)) === 4
   end
 
-  # test "mostRetweeted: with full set" do
-  #   assert(set4d.mostRetweeted.retweets === 29)
+  test "mostRetweeted: with full set", c do
+    assert mostRetweeted(c.set4d).retweets === 29
+  end
 
-  # end
-
-  # test "descending: set5" do
-  #   new TestSets {
-  #     val trends = set5.descendingByRetweet
-  #     assert(!trends.isEmpty)
-  #     assert(trends.head.user == "c" || trends.head.user == "d")
-  #   }
-  # end
+  test "descending: set5", c do
+    [h | t] = trends = descendingByRetweet(c.set5)
+    assert trends != []
+    assert [h.user == "c" || h.user == "d"]
+  end
 end

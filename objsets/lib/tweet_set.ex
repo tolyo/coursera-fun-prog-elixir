@@ -150,4 +150,26 @@ defmodule TweetSet do
   def foreach(%NonEmpty{} = set, f) do
     new(f.(set.elem), foreach(set.left, f), foreach(set.right, f))
   end
+
+  @google ["android", "Android", "galaxy", "Galaxy", "nexus", "Nexus"]
+  @apple ["ios", "iOS", "iphone", "iPhone", "ipad", "iPad"]
+
+  @spec googleTweets(TweetSet.t()) :: TweetSet.t()
+  def googleTweets(data) do
+    raise(UndefinedFunctionError)
+  end
+
+  @spec appleTweets(TweetSet.t()) :: TweetSet.t()
+  def appleTweets(data) do
+    raise(UndefinedFunctionError)
+  end
+
+  @doc """
+    A list of all tweets mentioning a keyword from either apple or google,
+    sorted by the number of retweets.
+  """
+  @spec trending() :: [Tweet.t()]
+  def trending() do
+    raise(UndefinedFunctionError)
+  end
 end
