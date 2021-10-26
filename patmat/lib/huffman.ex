@@ -51,12 +51,18 @@ defmodule Huffman do
 
   @spec weight(CodeTree.t()) :: non_neg_integer()
   def weight(tree) do
-    raise(UndefinedFunctionError)
+    case tree do
+      %Leaf{weight: weight} -> weight
+      %Fork{weight: weight} -> weight
+    end
   end
 
   @spec chars(CodeTree.t()) :: [char()]
   def chars(tree) do
-    raise(UndefinedFunctionError)
+    case tree do
+      %Leaf{char: char} -> [char]
+      %Fork{chars: chars} -> chars
+    end
   end
 
   @spec makeCodeTree(CodeTree.t(), CodeTree.t()) :: CodeTree.t()
@@ -71,13 +77,13 @@ defmodule Huffman do
     you to easily create a character list from a given string.
   """
   @spec string2Chars(String.t()) :: [char()]
-  def string2Chars(str), do: String.to_charlist(str)
+  def string2Chars(str), do: str |> String.graphemes() |> Enum.map(&String.to_charlist(&1))
 
   @doc """
     This function computes for each unique character in the list `chars` the number of
     times it occurs. For example, the invocation
 
-      times(List('a', 'b', 'a'))
+      times(['a', 'b', 'a'])
 
     should return the following (the order of the resulting list is not important):
 
@@ -103,7 +109,14 @@ defmodule Huffman do
   """
   @spec times([char()]) :: [{char(), non_neg_integer()}]
   def times(chars) do
-    raise(UndefinedFunctionError)
+    case chars do
+      [] ->
+        []
+
+      [h | t] ->
+        count = t |> Enum.filter(fn x -> x === h end) |> length()
+        [{h, count + 1} | times(Enum.filter(t, fn x -> x !== h end))]
+    end
   end
 
   @doc """
@@ -114,31 +127,35 @@ defmodule Huffman do
   """
   @spec makeOrderedLeafList([{char(), non_neg_integer()}]) :: [Leaf.t()]
   def makeOrderedLeafList(freqs) do
-    raise(UndefinedFunctionError)
+    freqs
+    |> Enum.sort_by(&elem(&1, 1))
+    |> Enum.map(&Leaf.new(elem(&1, 0), elem(&1, 1)))
   end
 
   @doc """
     Checks whether the list `trees` contains only one single code tree.
   """
   @spec singleton([CodeTree.t()]) :: boolean()
-  def singleton(trees) do
-    raise(UndefinedFunctionError)
-  end
+  def singleton(trees), do: trees |> length() == 1
 
   @doc """
-  #   /  The parameter `trees` of this function is a list of code trees ordered
+    The parameter `trees` of this function is a list of code trees ordered
     by ascending weights.
-       This function takes the first two elements of the list `trees` and combines
+    This function takes the first two elements of the list `trees` and combines
     them into a single `Fork` node. This node is then added back into the
     remaining elements of `trees` at a position such that the ordering by weights
     is preserved.
-       If `trees` is a list of less than two elements, that list should be returned
+    If `trees` is a list of less than two elements, that list should be returned
     unchanged.
-    */
   """
   @spec combine([CodeTree.t()]) :: [CodeTree.t()]
   def combine(trees) do
-    raise(UndefinedFunctionError)
+    case trees do
+      [] -> trees
+      [x] -> trees
+      [x | [y]] -> [makeCodeTree(x, y)]
+      [x | [y | t]] -> [makeCodeTree(x, y) | combine(t)]
+    end
   end
 
   @doc """
@@ -154,7 +171,13 @@ defmodule Huffman do
   @spec until(([CodeTree.t()] -> boolean()), ([CodeTree.t()] -> [CodeTree.t()])) ::
           ([CodeTree.t()] -> [CodeTree.t()])
   def until(done, merge) do
-    raise(UndefinedFunctionError)
+    fn tree ->
+      if done.(tree) do
+        tree
+      else
+        until(done, merge).(merge.(tree))
+      end
+    end
   end
 
   @doc """
@@ -164,7 +187,8 @@ defmodule Huffman do
   """
   @spec createCodeTree([char()]) :: CodeTree.t()
   def createCodeTree(chars) do
-    raise(UndefinedFunctionError)
+    until(&singleton(&1), &combine(&1)).(makeOrderedLeafList(times(chars)))
+    |> List.first()
   end
 
   #   Part 3: Decoding
