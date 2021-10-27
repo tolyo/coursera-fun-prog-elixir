@@ -71,35 +71,17 @@ defmodule Huffman do
     you to easily create a character list from a given string.
   """
   @spec string2Chars(String.t()) :: [char()]
-  def string2Chars(str), do: String.to_charlist(str)
+  def string2Chars(str), do: str |> String.graphemes() |> Enum.map(&String.to_charlist(&1))
 
   @doc """
     This function computes for each unique character in the list `chars` the number of
     times it occurs. For example, the invocation
 
-      times(List('a', 'b', 'a'))
+      times(['a', 'b', 'a'])
 
     should return the following (the order of the resulting list is not important):
 
-      List(('a', 2), ('b', 1))
-
-    The type `List[(Char, Int)]` denotes a list of pairs, where each pair consists of a
-    character and an integer. Pairs can be constructed easily using parentheses:
-
-      val pair: (Char, Int) = ('c', 1)
-
-    In order to access the two elements of a pair, you can use the accessors `_1` and `_2`:
-
-      val theChar = pair._1
-      val theInt  = pair._2
-
-    Another way to deconstruct a pair is using pattern matching:
-
-      pair match {
-          case (theChar, theInt) =>
-            println("character is: "+ theChar)
-            println("integer is  : "+ theInt)
-        }
+      [{'a', 2}, {'b', 1}]
   """
   @spec times([char()]) :: [{char(), non_neg_integer()}]
   def times(chars) do
@@ -126,15 +108,14 @@ defmodule Huffman do
   end
 
   @doc """
-  #   /  The parameter `trees` of this function is a list of code trees ordered
+    The parameter `trees` of this function is a list of code trees ordered
     by ascending weights.
-       This function takes the first two elements of the list `trees` and combines
+    This function takes the first two elements of the list `trees` and combines
     them into a single `Fork` node. This node is then added back into the
     remaining elements of `trees` at a position such that the ordering by weights
     is preserved.
-       If `trees` is a list of less than two elements, that list should be returned
+    If `trees` is a list of less than two elements, that list should be returned
     unchanged.
-    */
   """
   @spec combine([CodeTree.t()]) :: [CodeTree.t()]
   def combine(trees) do
@@ -144,7 +125,7 @@ defmodule Huffman do
   @doc """
     This function will be called in the following way:
 
-      until(singleton, combine)(trees)
+      until(singleton, combine).(trees)
 
     where `trees` is of type `List[CodeTree]`, `singleton` and `combine` refer to
     the two functions defined above. In such an invocation, `until` should call the
