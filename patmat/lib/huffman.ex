@@ -200,7 +200,23 @@ defmodule Huffman do
   """
   @spec decode(CodeTree.t(), [bit]) :: [char()]
   def decode(tree, bits) do
-    raise(UndefinedFunctionError)
+    decode_helper(tree, bits, tree, bits)
+  end
+
+  defp decode_helper(tree, bits, remaining_tree, remaining_bits) do
+    case remaining_tree do
+      %Leaf{} ->
+        case remaining_bits do
+          [] -> [remaining_tree.char]
+          [h | t] -> [remaining_tree.char | decode_helper(tree, bits, tree, remaining_bits)]
+        end
+
+      %Fork{} ->
+        case remaining_bits do
+          [0 | t] -> decode_helper(tree, bits, remaining_tree.left, t)
+          [1 | t] -> decode_helper(tree, bits, remaining_tree.right, t)
+        end
+    end
   end
 
   @doc """
@@ -223,7 +239,7 @@ defmodule Huffman do
   """
   @spec decodedSecret() :: [char()]
   def decodedSecret() do
-    raise(UndefinedFunctionError)
+    decode(frenchCode(), secret())
   end
 
   # Part 4a: Encoding using Huffman tree
@@ -234,7 +250,26 @@ defmodule Huffman do
   """
   @spec encode(CodeTree.t()) :: ([char] -> [bit()])
   def encode(tree) do
-    raise UndefinedFunctionError
+    fn chars ->
+      chars
+      |> Enum.map(fn x -> encodeChar(tree, x) end)
+      |> List.flatten()
+    end
+  end
+
+  @spec encodeChar(CodeTree.t(), char()) :: [bit]
+  def encodeChar(tree, c) do
+    case tree do
+      %Leaf{} ->
+        []
+
+      %Fork{} ->
+        if Enum.any?(chars(tree.left), &(&1 == c)) do
+          [0 | encodeChar(tree.left, c)]
+        else
+          [1 | encodeChar(tree.right, c)]
+        end
+    end
   end
 
   #   Part 4b: Encoding using code table
@@ -249,6 +284,12 @@ defmodule Huffman do
   """
   @spec codeBits(CodeTable.t()) :: (char() -> [bit])
   def codeBits(table) do
+    fn char ->
+      case Enum.find(table, fn x -> elem(x, 0) == char end) do
+        nil -> []
+        val -> elem(val, 1)
+      end
+    end
   end
 
   @doc """
@@ -261,7 +302,18 @@ defmodule Huffman do
   """
   @spec convert(CodeTree.t()) :: CodeTable.t()
   def convert(tree) do
-    raise(UndefinedFunctionError)
+    convert_tree_helper(tree, tree)
+  end
+
+  defp convert_tree_helper(original_tree, tree) do
+    case tree do
+      %Fork{} ->
+        mergeCodeTables(convert(tree.left), convert(tree.right))
+
+      %Leaf{} ->
+        bits = encode(original_tree).([tree.char])
+        [{tree.char, bits}]
+    end
   end
 
   @doc """
@@ -271,7 +323,11 @@ defmodule Huffman do
   """
   @spec mergeCodeTables(CodeTable.t(), CodeTable.t()) :: CodeTable.t()
   def mergeCodeTables(a, b) do
-    raise(UndefinedFunctionError)
+    case a do
+      [] -> Enum.map(b, fn x -> {elem(x, 0), elem(x, 1) ++ [1]} end)
+      [x] -> [{elem(x, 0), elem(x, 1) ++ [0]}] ++ mergeCodeTables([], b)
+      [x | t] -> [{elem(x, 0), elem(x, 1) ++ [0]}] ++ mergeCodeTables(t, b)
+    end
   end
 
   @doc """
@@ -281,6 +337,10 @@ defmodule Huffman do
   """
   @spec quickEncode(CodeTree.t()) :: ([char()] -> [bit()])
   def quickEncode(tree) do
-    raise(UndefinedFunctionError)
+    fn text ->
+      text
+      |> Enum.map(fn x -> codeBits(convert(tree)).(x) end)
+      |> List.flatten()
+    end
   end
 end

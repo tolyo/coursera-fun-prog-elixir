@@ -75,4 +75,32 @@ defmodule PatmatTest do
     assert createCodeTree(string2Chars("tet")) ==
              Fork.new(Leaf.new('e', 1), Leaf.new('t', 2), ['e', 't'], 3)
   end
+
+  test "decode", c do
+    assert decode(c.t1, [0, 1]) === ['a', 'b']
+  end
+
+  test "decode and encode a very short text should be identity", c do
+    assert decode(c.t1, encode(c.t1).(string2Chars("abbabb"))) === string2Chars("abbabb")
+    assert encode(frenchCode()).(decodedSecret()) === secret
+  end
+
+  test "decode and quick a very short text should be identity", c do
+    assert quickEncode(c.t1).(string2Chars("abab")) === [0, 1, 0, 1]
+  end
+
+  test "codebits" do
+    codeList = [{'a', [1, 2]}]
+    assert codeBits(codeList).('a') == [1, 2]
+  end
+
+  test "convert", c do
+    assert convert(c.t1) === [{'a', [0]}, {'b', [1]}]
+  end
+
+  test "merge" do
+    a = [{'a', [0]}]
+    b = [{'a', [0]}]
+    assert mergeCodeTables(a, b) === [{'a', [0, 0]}, {'a', [0, 1]}]
+  end
 end

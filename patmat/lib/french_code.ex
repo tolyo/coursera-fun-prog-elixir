@@ -1,4 +1,9 @@
 defmodule FrenchCode do
+  alias Huffman.{
+    Fork,
+    Leaf
+  }
+
   def get() do
     Fork.new(
       Fork.new(
@@ -44,7 +49,7 @@ defmodule FrenchCode do
           250_291
         ),
         Fork.new(
-          Fork.ne0w(Leaf.new('o', 82762), Leaf.new('l', 83668), ['o', 'l'], 166_430),
+          Fork.new(Leaf.new('o', 82762), Leaf.new('l', 83668), ['o', 'l'], 166_430),
           Fork.new(
             Fork.new(Leaf.new('m', 45521), Leaf.new('p', 46335), ['m', 'p'], 91856),
             Leaf.new('u', 96785),
