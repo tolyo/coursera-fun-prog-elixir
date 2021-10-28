@@ -38,17 +38,42 @@ defmodule Anagrams do
     same character, and are represented as a lowercase character in the occurrence list.
     Note: you must use `groupBy` to implement this method!
   """
-  @spec wordoccurences(word) :: occurences
-  def wordoccurences(w) do
-    raise(UndefinedFunctionError)
+  @spec wordOccurrences(word) :: occurences
+  def wordOccurrences(w) do
+    w
+    |> String.downcase()
+    |> String.graphemes()
+    |> Enum.sort()
+    |> Enum.map(&String.to_charlist(&1))
+    |> wordOccurrences_helper()
+  end
+
+  defp wordOccurrences_helper(chars) do
+    case chars do
+      [] ->
+        []
+
+      [h | t] ->
+        chars
+        |> Enum.group_by(&(&1 == h))
+        |> case do
+          %{true: heads, false: tails} ->
+            [{h, length(heads)} | wordOccurrences_helper(tails)]
+
+          %{true: heads} ->
+            [{h, length(heads)}]
+        end
+    end
   end
 
   @doc """
     Converts a sentence into its character occurrence list.
   """
-  @spec sentenceoccurences(sentence) :: Occurences
-  def sentenceoccurences(s) do
-    raise(UndefinedFunctionError)
+  @spec sentenceOccurrences(sentence) :: Occurences
+  def sentenceOccurrences(s) do
+    s
+    |> Enum.join()
+    |> wordOccurrences()
   end
 
   @doc """
