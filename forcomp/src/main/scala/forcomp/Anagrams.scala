@@ -6,7 +6,7 @@ object Anagrams {
 
   /** A word is simply a `String`. */
   type Word = String
-
+  
   /** A sentence is a `List` of words. */
   type Sentence = List[Word]
 

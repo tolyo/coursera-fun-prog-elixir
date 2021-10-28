@@ -87,25 +87,7 @@ defmodule Huffman do
 
     should return the following (the order of the resulting list is not important):
 
-      List(('a', 2), ('b', 1))
-
-    The type `List[(Char, Int)]` denotes a list of pairs, where each pair consists of a
-    character and an integer. Pairs can be constructed easily using parentheses:
-
-      val pair: (Char, Int) = ('c', 1)
-
-    In order to access the two elements of a pair, you can use the accessors `_1` and `_2`:
-
-      val theChar = pair._1
-      val theInt  = pair._2
-
-    Another way to deconstruct a pair is using pattern matching:
-
-      pair match {
-          case (theChar, theInt) =>
-            println("character is: "+ theChar)
-            println("integer is  : "+ theInt)
-        }
+      [{'a', 2}, {'b', 1}]
   """
   @spec times([char()]) :: [{char(), non_neg_integer()}]
   def times(chars) do
@@ -161,7 +143,7 @@ defmodule Huffman do
   @doc """
     This function will be called in the following way:
 
-      until(singleton, combine)(trees)
+      until(singleton, combine).(trees)
 
     where `trees` is of type `List[CodeTree]`, `singleton` and `combine` refer to
     the two functions defined above. In such an invocation, `until` should call the
