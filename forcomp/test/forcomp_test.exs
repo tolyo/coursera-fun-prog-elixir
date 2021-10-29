@@ -43,4 +43,23 @@ defmodule ForcompTest do
              {'t', 1}
            ]
   end
+
+  test "dictionaryByOccurrences.get: eat" do
+    %{[{'a', 1}, {'e', 1}, {'t', 1}] => x} = dictionaryByOccurrences()
+    assert x === ["ate", "eat", "tea"]
+  end
+
+  test "word anagrams: married" do
+    wordAnagrams("married")
+    |> Enum.each(fn x ->
+      assert Enum.member?(["married", "admirer"], x)
+    end)
+  end
+
+  test "word anagrams: player" do
+    wordAnagrams("player")
+    |> Enum.each(fn x ->
+      assert Enum.member?(["parley", "pearly", "player", "replay"], x)
+    end)
+  end
 end

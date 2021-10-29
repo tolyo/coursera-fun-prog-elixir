@@ -86,9 +86,10 @@ defmodule Anagrams do
     This means that the `dictionaryByoccurences` map will contain an entry:
       List(('a', 1), ('e', 1), ('t', 1)) -> Seq("ate", "eat", "tea")
   """
-  @spec dictionaryByoccurences() :: {occurences, [word]}
-  def dictionaryByoccurences do
-    raise(UndefinedFunctionError)
+  @spec dictionaryByOccurrences() :: %{occurences => [word]}
+  def dictionaryByOccurrences() do
+    Dictionary.loadDictionary()
+    |> Enum.group_by(&wordOccurrences(&1))
   end
 
   @doc """
@@ -96,7 +97,8 @@ defmodule Anagrams do
   """
   @spec wordAnagrams(word) :: [word]
   def wordAnagrams(word) do
-    raise(UndefinedFunctionError)
+    dictionaryByOccurrences()
+    |> Map.get(wordOccurrences(word))
   end
 
   @doc """
