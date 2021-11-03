@@ -38,16 +38,17 @@ defmodule Anagrams do
     same character, and are represented as a lowercase character in the occurrence list.
     Note: you must use `groupBy` to implement this method!
   """
-  @spec wordoccurences(word) :: occurences
-  def wordoccurences(w) do
+  @spec wordOccurrences(word) :: occurences
+  def wordOccurrences(w) do
     raise(UndefinedFunctionError)
   end
+
 
   @doc """
     Converts a sentence into its character occurrence list.
   """
-  @spec sentenceoccurences(sentence) :: Occurences
-  def sentenceoccurences(s) do
+  @spec sentenceOccurrences(sentence) :: occurences()
+  def sentenceOccurrences(s) do
     raise(UndefinedFunctionError)
   end
 
@@ -61,8 +62,8 @@ defmodule Anagrams do
     This means that the `dictionaryByoccurences` map will contain an entry:
       List(('a', 1), ('e', 1), ('t', 1)) -> Seq("ate", "eat", "tea")
   """
-  @spec dictionaryByoccurences() :: {occurences, [word]}
-  def dictionaryByoccurences do
+  @spec dictionaryByOccurrences() :: %{occurences => [word]}
+  def dictionaryByOccurrences() do
     raise(UndefinedFunctionError)
   end
 
@@ -94,7 +95,7 @@ defmodule Anagrams do
     Note that the order of the occurrence list subsets does not matter -- the subsets
     in the example above could have been displayed in some other order.
   """
-  @spec combinations(Occurences) :: [Occurences]
+  @spec combinations(occurences) :: [occurences]
   def combinations(occurrences) do
     raise(UndefinedFunctionError)
   end
@@ -108,7 +109,7 @@ defmodule Anagrams do
     Note: the resulting value is an occurrence - meaning it is sorted
     and has no zero-entries.
   """
-  @spec subtract(Occurences, Occurences) :: Occurences
+  @spec subtract(occurences(), occurences()) :: occurences()
   def subtract(x, y) do
     raise(UndefinedFunctionError)
   end
