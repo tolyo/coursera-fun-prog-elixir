@@ -69,7 +69,7 @@ defmodule Anagrams do
   @doc """
     Converts a sentence into its character occurrence list.
   """
-  @spec sentenceOccurrences(sentence) :: Occurences
+  @spec sentenceOccurrences(sentence) :: occurences()
   def sentenceOccurrences(s) do
     s
     |> Enum.join()
@@ -121,9 +121,26 @@ defmodule Anagrams do
     Note that the order of the occurrence list subsets does not matter -- the subsets
     in the example above could have been displayed in some other order.
   """
-  @spec combinations(Occurences) :: [Occurences]
+  @spec combinations(occurences) :: [occurences]
   def combinations(occurrences) do
-    raise(UndefinedFunctionError)
+    case occurrences do
+      [] ->
+        []
+
+      [{x1, x2}] ->
+        for x <- 0..x2 do
+          [{x1, x}]
+        end
+
+      [{x1, x2} | t] ->
+        for x <- 0..x2,
+            y <- combinations(t) do
+          [{x1, x}] ++ y
+        end
+    end
+    |> Enum.map(fn x ->
+      Enum.filter(x, fn {_y1, y2} -> y2 !== 0 end)
+    end)
   end
 
   @doc """
@@ -135,9 +152,25 @@ defmodule Anagrams do
     Note: the resulting value is an occurrence - meaning it is sorted
     and has no zero-entries.
   """
-  @spec subtract(Occurences, Occurences) :: Occurences
+  @spec subtract(occurences(), occurences()) :: occurences()
   def subtract(x, y) do
-    raise(UndefinedFunctionError)
+    case y do
+      [] ->
+        x
+
+      [h | t] ->
+        x
+        |> Enum.filter(fn y -> y !== h end)
+        |> Enum.map(fn {x1, x2} ->
+          {y1, y2} = h
+
+          case y1 == x1 do
+            true -> {x1, x2 - y2}
+            false -> {x1, x2}
+          end
+        end)
+        |> subtract(t)
+    end
   end
 
   @doc """
@@ -175,6 +208,55 @@ defmodule Anagrams do
   """
   @spec sentenceAnagrams(sentence) :: [sentence]
   def sentenceAnagrams(sentence) do
-    raise(UndefinedFunctionError)
+    occs = sentenceOccurrences(sentence)
+
+    helper(occs, dictionaryByOccurrences())
+    |> Enum.filter(&(&1 !== []))
+    |> Enum.map(&extractWord(&1, []))
+    |> Enum.map(&extractList(&1, []))
+    |> List.foldl([], fn x, acc ->
+      case x do
+        [h] -> [h | acc]
+        [h | t] -> acc ++ x
+      end
+    end)
+    |> Enum.filter(fn x ->
+      sentenceOccurrences(List.flatten(x)) == occs
+    end)
   end
+
+  def helper(occ, dict) do
+    case occ do
+      [] ->
+        []
+
+      _ ->
+        for comb <- combinations(occ),
+            comb !== [],
+            Map.has_key?(dict, comb),
+            x <- Map.get(dict, comb) do
+          case subtract(occ, comb) do
+            [] ->
+              # use a tuple for a marker of an constructed anagram
+              [{:word, x}]
+
+            rest ->
+              for y <- helper(rest, dict), y !== [] do
+                [x | [y]]
+              end
+          end
+        end
+    end
+  end
+
+  def extractWord([], acc), do: []
+  def extractWord([{:word, x} | t], acc), do: [x | acc] |> Enum.reverse()
+  def extractWord([[h | t]], acc), do: extractWord([h | t], acc)
+  def extractWord([[h]], acc), do: extractWord([h], acc)
+  def extractWord([h | t], acc) when is_list(h), do: [extractWord(h, acc) | [extractWord(t, [])]]
+  def extractWord([h | t], acc) when is_list(t), do: extractWord(t, [h | acc])
+
+  def extractList([[h | t]], acc), do: extractList([h | t], acc)
+  def extractList([h | t], acc) when is_list(h), do: extractList(t, [h | acc])
+  def extractList(val, acc) when val !== [], do: [val | acc] |> Enum.reverse()
 end
