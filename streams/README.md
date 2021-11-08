@@ -1,5 +1,6 @@
 # Lab 7: Bloxorz (Streams)
 
+This assignment was moved to a [subsequent course](https://www.coursera.org/learn/scala-functional-program-design/programming/Sh2dW/bloxorz)
 ## QuickCheck
 
 In this assignment you will implement a solver for a simplified version of a Flash game
