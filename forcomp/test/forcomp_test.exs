@@ -148,6 +148,8 @@ defmodule ForcompTest do
       ["Linux", "rulez"]
     ]
 
+    assert sentenceAnagrams(sentence) != []
+
     sentenceAnagrams(sentence)
     |> Enum.each(fn x ->
       assert Enum.member?(anas, x)

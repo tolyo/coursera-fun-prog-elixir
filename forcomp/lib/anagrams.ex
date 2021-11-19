@@ -231,9 +231,7 @@ defmodule Anagrams do
         []
 
       _ ->
-        for comb <- combinations(occ),
-            comb !== [],
-            Map.has_key?(dict, comb),
+        for comb <- combinations(occ), Map.has_key?(dict, comb),
             x <- Map.get(dict, comb) do
           case subtract(occ, comb) do
             [] ->
