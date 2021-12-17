@@ -66,6 +66,7 @@ defmodule Anagrams do
     end
   end
 
+
   @doc """
     Converts a sentence into its character occurrence list.
   """
