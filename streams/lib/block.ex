@@ -38,6 +38,7 @@ defmodule Block do
     )
   end
 
+
   @doc """
     The block obtained by moving left
   """
@@ -116,32 +117,39 @@ defmodule Block do
   """
   @spec neighbors(Block.t()) :: [{Block.t(), GameDef.move()}]
   def neighbors(block) do
-    raise(UndefinedFunctionError)
+    [
+      {left(block), :left},
+      {right(block), :right},
+      {up(block), :up},
+      {down(block), :down}
+    ]
   end
 
   @doc """
     Returns the list of positions reachable from the current block
   which are inside the terrain.
   """
-  @spec legalNeighbors(Block.t()) :: [{Block.t(), GameDef.move()}]
-  def legalNeighbors(block) do
-    raise(UndefinedFunctionError)
+   @spec legalNeighbors(Block.t(), Terrain.t()) :: [{Block.t(), GameDef.move()}]
+  def legalNeighbors(%Block{} = block, terrain) do
+    block
+    |> neighbors()
+    |> Enum.filter(fn {neighborBlock, _} -> isLegal(neighborBlock, terrain) end)
   end
 
   @doc """
     Returns true if the block is standing
   """
   @spec isStanding(Block.t()) :: boolean()
-  def isStanding(block) do
-   raise(UndefinedFunctionError)
+  def isStanding(%Block{b1: b1, b2: b2}) do
+    b1 == b2
   end
 
   @doc """
     Returns `true` if the block is entirely inside the terrain.
   """
-  @spec isLegal(Block.t()) :: boolean()
-  def isLegal(block) do
-   raise(UndefinedFunctionError)
+  @spec isLegal(Block.t(), Terrain.t()) :: boolean()
+  def isLegal(%Block{b1: b1, b2: b2}, terrain) do
+    terrain.(b1) && terrain.(b2)
   end
 
 end

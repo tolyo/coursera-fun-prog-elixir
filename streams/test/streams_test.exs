@@ -2,30 +2,8 @@ defmodule StreamsTest do
   use ExUnit.Case
   doctest Streams
 
-  # This method applies a list of moves `ls` to the block at position
-  # `startPos`. This can be used to verify if a certain list of moves
-  # is a valid solution, i.e. leads to the goal.
-  defmodule SolutionChecker do
-    defmacro __using__(_opts) do
-      quote do
-        @spec solve(%Pos{}, [Move.t()]) :: Block.t()
-        def solve(block, moves) do
-          Enum.reduce(moves, block, fn move, acc ->
-            case move do
-              :left -> Block.left(acc)
-              :right -> Block.right(acc)
-              :up -> Block.up(acc)
-              :down -> Block.down(acc)
-            end
-          end)
-        end
-      end
-    end
-  end
-
   defmodule Level1 do
     use StringParserTerrain
-    use SolutionChecker
 
     @spec level :: String.t()
     def level,
@@ -70,9 +48,17 @@ defmodule StreamsTest do
   end
 
   test "is legal" do
-    assert Block.isLegal(%Block{b1: Level1.startPos(), b2: Level1.startPos()})
-    assert Block.isLegal(%Block{b1: Level1.startPos(), b2: %Pos{row: 1, col: 2}})
-    assert not Block.isLegal(%Block{b1: %Pos{row: 0, col: 5}, b2: %Pos{row: 0, col: 6}})
+    with {testVector, _} <- Level1.vector() do
+      terrain = Level1.terrainFunction(testVector)
+      assert Block.isLegal(%Block{b1: Level1.startPos(), b2: Level1.startPos()}, terrain)
+      assert Block.isLegal(%Block{b1: Level1.startPos(), b2: %Pos{row: 1, col: 2}}, terrain)
+      assert not Block.isLegal(%Block{b1: %Pos{row: 0, col: 5}, b2: %Pos{row: 0, col: 6}}, terrain)
+    end
+  end
+
+  test "is standing" do
+    assert Block.isStanding(%Block{b1: Level1.startPos, b2: Level1.startPos})
+    assert not Block.isStanding(%Block{b1: Level1.startPos, b2: %Pos{row: 1, col: 2}})
   end
 
   test "neighbors" do
@@ -80,6 +66,9 @@ defmodule StreamsTest do
   end
 
   test "legal neighbors" do
-    assert length(Block.legalNeighbors(%Block{b1: Level1.startPos(), b2: Level1.startPos()})) === 2
+    with {testVector, _} <- Level1.vector() do
+      terrain = Level1.terrainFunction(testVector)
+      assert length(Block.legalNeighbors(%Block{b1: Level1.startPos(), b2: Level1.startPos()}, terrain)) === 2
+    end
   end
 end
