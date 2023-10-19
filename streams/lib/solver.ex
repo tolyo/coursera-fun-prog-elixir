@@ -9,6 +9,7 @@ defmodule Solver do
   """
   @spec done(Block.t()) :: boolean()
   def done(b) do
+    # b.b1 == GameDef.goal() && b.b2 == GameDef.goal()
     raise(UndefinedFunctionError)
   end
 
