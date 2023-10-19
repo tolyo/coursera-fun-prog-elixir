@@ -3,35 +3,41 @@ defmodule StreamsTest do
   doctest Streams
 
   defmodule Level1 do
-    use StringParserTerrain
+
 
     @spec level :: String.t()
-    def level,
-      do: """
-        ooo-------
-        ooSoooo----
-        ooooooooo-
-        -ooooooooo
-        -----ooToo
-        ------ooo-
+    def level do
       """
+      o0o-------
+      oSoooo----
+      ooooooooo-
+      -ooooooooo
+      -----ooToo
+      ------ooo-
+      """
+    end
 
-    def vector, do: vector(level())
+    def vector, do: StringParserTerrain.vector(level())
 
-    def startPos, do: startPos(vector())
+    def terrain, do: StringParserTerrain.terrain(vector())
+
+    def startPos, do: StringParserTerrain.startPos(vector())
+
+    def goal, do: StringParserTerrain.goal(vector())
+
+    def done(b), do: Solver.done(b, goal())
   end
 
   describe "bloxzor" do
     test "findChar level 1" do
-      with {pos, _} <- Level1.startPos() do
-        assert pos == %Pos{row: 1, col: 1}
-      end
+      pos = Level1.startPos()
+      assert pos == %Pos{row: 1, col: 1}
     end
   end
 
   test "terrainFunction function" do
     with {testVector, _} <- Level1.vector() do
-      func = Level1.terrainFunction(testVector)
+      func = StringParserTerrain.terrainFunction(testVector)
       assert func.(%Pos{row: 0, col: 0}) === true
       assert func.(%Pos{row: -1, col: -1}) === false
       assert func.(%Pos{row: 4, col: 4}) === false
@@ -41,19 +47,23 @@ defmodule StreamsTest do
   end
 
   test "findChar function" do
-    with {testVector, _} <- Level1.vector() do
-      assert Level1.findChar(~c"S", testVector) === %Pos{row: 0, col: 0}
-      assert Level1.findChar(~c"T", testVector) === %Pos{row: 0, col: 1}
-    end
+    level =
+      """
+      ST
+      -o
+      oo
+      """
+    testVector = StringParserTerrain.vector(level)
+    terrain = StringParserTerrain.terrainFunction(testVector)
+    assert StringParserTerrain.findChar("S", testVector) == %Pos{row: 0, col: 0}
+    assert StringParserTerrain.findChar("T", testVector) == %Pos{row: 0, col: 1}
   end
 
   test "is legal" do
-    with {testVector, _} <- Level1.vector() do
-      terrain = Level1.terrainFunction(testVector)
-      assert Block.isLegal(%Block{b1: Level1.startPos(), b2: Level1.startPos()}, terrain)
-      assert Block.isLegal(%Block{b1: Level1.startPos(), b2: %Pos{row: 1, col: 2}}, terrain)
-      assert not Block.isLegal(%Block{b1: %Pos{row: 0, col: 5}, b2: %Pos{row: 0, col: 6}}, terrain)
-    end
+    terrain = Level1.terrain()
+    assert Block.isLegal(%Block{b1: Level1.startPos(), b2: Level1.startPos()}, terrain)
+    assert Block.isLegal(%Block{b1: Level1.startPos(), b2: %Pos{row: 1, col: 2}}, terrain)
+    assert not Block.isLegal(%Block{b1: %Pos{row: 10, col: 8}, b2: %Pos{row: 10, col: 9}}, terrain)
   end
 
   test "is standing" do
@@ -66,9 +76,46 @@ defmodule StreamsTest do
   end
 
   test "legal neighbors" do
-    with {testVector, _} <- Level1.vector() do
-      terrain = Level1.terrainFunction(testVector)
-      assert length(Block.legalNeighbors(%Block{b1: Level1.startPos(), b2: Level1.startPos()}, terrain)) === 2
-    end
+    terrain = Level1.terrain()
+    assert length(Block.legalNeighbors(%Block{b1: Level1.startPos(), b2: Level1.startPos()}, terrain)) === 2
   end
+
+  test "done" do
+    assert Level1.done(%Block{b1: Level1.goal, b2: Level1.goal})
+    assert not Level1.done(%Block{b1: %Pos{row: 1, col: 1}, b2: %Pos{row: 1, col: 1}})
+  end
+
+  test "neighbors with history" do
+      testVector = Level1.vector()
+      terrain = StringParserTerrain.terrainFunction(testVector)
+      result = Solver.neighborsWithHistory(
+        %Block{b1: %Pos{row: 1, col: 1}, b2: %Pos{row: 1, col: 1}},
+        [:left, :up],
+        terrain
+      )
+      test_set = [
+        {%Block{b1: %Pos{row: 1, col: 2}, b2: %Pos{row: 1, col: 3}}, [:right, :left, :up]},
+        {%Block{b1: %Pos{row: 2, col: 1}, b2: %Pos{row: 3, col: 1}}, [:down, :left, :up]}
+      ]
+      assert length(result) === 2
+      assert result == test_set
+  end
+
+#  test "new neighbors only" do
+#    result = Solver.newNeighborsOnly(
+#      [
+#        {%Block{b1: %Pos{row: 1, col: 2}, b2: %Pos{row: 1, col: 3}}, [:right, :left, :up]},
+#        {%Block{b1: %Pos{row: 2, col: 1}, b2: %Pos{row: 3, col: 1}}, [:down, :left, :up]}
+#      ],
+#      [
+#        %Block{b1: %Pos{row: 1, col: 2}, b2: %Pos{row: 1, col: 3}},
+#        %Block{b1: %Pos{row: 1, col: 1}, b2: %Pos{row: 1, col: 1}}
+#      ]
+#    )
+#    test_result = [
+#      {%Block{b1: %Pos{row: 2, col: 1}, b2: %Pos{row: 3, col: 1}}, [:down, :left, :up]}
+#    ]
+#    assert result === test_result
+#  end
+
 end

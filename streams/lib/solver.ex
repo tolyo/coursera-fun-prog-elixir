@@ -7,10 +7,9 @@ defmodule Solver do
   @doc """
     Returns `true` if the block `b` is at the final position
   """
-  @spec done(Block.t()) :: boolean()
-  def done(b) do
-    # b.b1 == GameDef.goal() && b.b2 == GameDef.goal()
-    raise(UndefinedFunctionError)
+  @spec done(Block.t(), Pos.t()) :: boolean()
+  def done(%Block{b1: b1, b2: b2}, goal) do
+     b1 == goal && b2 == goal
   end
 
   @doc """
@@ -29,9 +28,12 @@ defmodule Solver do
     It should only return valid neighbors, i.e. block positions
     that are inside the terrain.
   """
-  @spec neighborsWithHistory(Block.t(), [Move.t()]) :: [{Block.t(), [Move.t()]}]
-  def neighborsWithHistory(b, history) do
-    raise(UndefinedFunctionError)
+  @spec neighborsWithHistory(Block.t(), [Move.t()], Terrain.t()) :: [{Block.t(), [Move.t()]}]
+  def neighborsWithHistory(block, history, terrain) do
+    ln = Block.legalNeighbors(block, terrain)
+    for {neighbor, move} <- ln do
+      {neighbor, [move | history]}
+    end
   end
 
   @doc """
@@ -41,7 +43,9 @@ defmodule Solver do
   """
   @spec newNeighborsOnly([{Block.t(), [Move.t()]}], MapSet.t()) :: [{Block.t(), [Move.t()]}]
   def newNeighborsOnly(neighbors, explored) do
-    raise(UndefinedFunctionError)
+    Enum.filter(neighbors, fn {block, _} ->
+      not MapSet.member?(explored, block)
+    end)
   end
 
   @doc """
