@@ -9,7 +9,7 @@ defmodule Solver do
   """
   @spec done(Block.t(), Pos.t()) :: boolean()
   def done(%Block{b1: b1, b2: b2}, goal) do
-     b1 == goal && b2 == goal
+    b1 == goal && b2 == goal
   end
 
   @doc """
@@ -72,6 +72,8 @@ defmodule Solver do
     construct the correctly sorted lazy list.
   """
   @spec from([{Block.t(), [Move.t()]}], MapSet.t()) :: [{Block.t(), [Move.t()]}]
+
+  def from([], _) do [] end
   def from(initial, explored) do
     raise(UndefinedFunctionError)
   end
@@ -103,6 +105,8 @@ defmodule Solver do
   """
   @spec solution() :: [{Block.t(), [Move.t()]}]
   def solution() do
-    raise(UndefinedFunctionError)
+    if Enum.empty?(pathsToGoal()) do []
+    else elem(Enum.min_by(pathsToGoal(), fn {_, moves} -> length(moves) end), 1)
+    end
   end
 end

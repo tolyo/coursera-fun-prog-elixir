@@ -3,8 +3,6 @@ defmodule StreamsTest do
   doctest Streams
 
   defmodule Level1 do
-
-
     @spec level :: String.t()
     def level do
       """
@@ -53,6 +51,7 @@ defmodule StreamsTest do
       -o
       oo
       """
+
     testVector = StringParserTerrain.vector(level)
     terrain = StringParserTerrain.terrainFunction(testVector)
     assert StringParserTerrain.findChar("S", testVector) == %Pos{row: 0, col: 0}
@@ -63,12 +62,16 @@ defmodule StreamsTest do
     terrain = Level1.terrain()
     assert Block.isLegal(%Block{b1: Level1.startPos(), b2: Level1.startPos()}, terrain)
     assert Block.isLegal(%Block{b1: Level1.startPos(), b2: %Pos{row: 1, col: 2}}, terrain)
-    assert not Block.isLegal(%Block{b1: %Pos{row: 10, col: 8}, b2: %Pos{row: 10, col: 9}}, terrain)
+
+    assert not Block.isLegal(
+             %Block{b1: %Pos{row: 10, col: 8}, b2: %Pos{row: 10, col: 9}},
+             terrain
+           )
   end
 
   test "is standing" do
-    assert Block.isStanding(%Block{b1: Level1.startPos, b2: Level1.startPos})
-    assert not Block.isStanding(%Block{b1: Level1.startPos, b2: %Pos{row: 1, col: 2}})
+    assert Block.isStanding(%Block{b1: Level1.startPos(), b2: Level1.startPos()})
+    assert not Block.isStanding(%Block{b1: Level1.startPos(), b2: %Pos{row: 1, col: 2}})
   end
 
   test "neighbors" do
@@ -77,45 +80,56 @@ defmodule StreamsTest do
 
   test "legal neighbors" do
     terrain = Level1.terrain()
-    assert length(Block.legalNeighbors(%Block{b1: Level1.startPos(), b2: Level1.startPos()}, terrain)) === 2
+
+    assert length(
+             Block.legalNeighbors(%Block{b1: Level1.startPos(), b2: Level1.startPos()}, terrain)
+           ) === 2
   end
 
   test "done" do
-    assert Level1.done(%Block{b1: Level1.goal, b2: Level1.goal})
+    assert Level1.done(%Block{b1: Level1.goal(), b2: Level1.goal()})
     assert not Level1.done(%Block{b1: %Pos{row: 1, col: 1}, b2: %Pos{row: 1, col: 1}})
   end
 
   test "neighbors with history" do
-      testVector = Level1.vector()
-      terrain = StringParserTerrain.terrainFunction(testVector)
-      result = Solver.neighborsWithHistory(
+    testVector = Level1.vector()
+    terrain = StringParserTerrain.terrainFunction(testVector)
+
+    result =
+      Solver.neighborsWithHistory(
         %Block{b1: %Pos{row: 1, col: 1}, b2: %Pos{row: 1, col: 1}},
         [:left, :up],
         terrain
       )
-      test_set = [
+
+    test_set = [
+      {%Block{b1: %Pos{row: 1, col: 2}, b2: %Pos{row: 1, col: 3}}, [:right, :left, :up]},
+      {%Block{b1: %Pos{row: 2, col: 1}, b2: %Pos{row: 3, col: 1}}, [:down, :left, :up]}
+    ]
+
+    assert length(result) === 2
+    assert result == test_set
+  end
+
+  test "new neighbors only" do
+    neighbors =
+      [
         {%Block{b1: %Pos{row: 1, col: 2}, b2: %Pos{row: 1, col: 3}}, [:right, :left, :up]},
         {%Block{b1: %Pos{row: 2, col: 1}, b2: %Pos{row: 3, col: 1}}, [:down, :left, :up]}
       ]
-      assert length(result) === 2
-      assert result == test_set
+
+    explored =
+      MapSet.new([
+        %Block{b1: %Pos{row: 1, col: 2}, b2: %Pos{row: 1, col: 3}},
+        %Block{b1: %Pos{row: 1, col: 1}, b2: %Pos{row: 1, col: 1}}
+      ])
+
+    result = Solver.newNeighborsOnly(neighbors,explored)
+
+    test_result = [
+      {%Block{b1: %Pos{row: 2, col: 1}, b2: %Pos{row: 3, col: 1}}, [:down, :left, :up]}
+    ]
+
+    assert result === test_result
   end
-
-#  test "new neighbors only" do
-#    result = Solver.newNeighborsOnly(
-#      [
-#        {%Block{b1: %Pos{row: 1, col: 2}, b2: %Pos{row: 1, col: 3}}, [:right, :left, :up]},
-#        {%Block{b1: %Pos{row: 2, col: 1}, b2: %Pos{row: 3, col: 1}}, [:down, :left, :up]}
-#      ],
-#      [
-#        %Block{b1: %Pos{row: 1, col: 2}, b2: %Pos{row: 1, col: 3}},
-#        %Block{b1: %Pos{row: 1, col: 1}, b2: %Pos{row: 1, col: 1}}
-#      ]
-#    )
-#    test_result = [
-#      {%Block{b1: %Pos{row: 2, col: 1}, b2: %Pos{row: 3, col: 1}}, [:down, :left, :up]}
-#    ]
-#    assert result === test_result
-#  end
-
 end
