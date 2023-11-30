@@ -1,5 +1,6 @@
 defmodule Solver do
-  @type history() :: Stream.t({Block.t(), [Move.t()]})
+  @type moves :: [Move.t()]
+  @type history() :: Stream.t({Block.t(), moves()})
   @moduledoc """
     This component implements the solver
     for the Bloxorz game
@@ -29,7 +30,7 @@ defmodule Solver do
     It should only return valid neighbors, i.e. block positions
     that are inside the terrain.
   """
-  @spec neighborsWithHistory(Block.t(), [Move.t()], Terrain.t()) :: history()
+  @spec neighborsWithHistory(Block.t(), moves(), Terrain.t()) :: history()
   def neighborsWithHistory(block, history, terrain) do
     Block.legalNeighbors(block, terrain)
     |> Enum.map(fn {neighbor, move} -> {neighbor, [move | history]} end)
@@ -44,7 +45,7 @@ defmodule Solver do
   @spec newNeighborsOnly(
           [history()],
           MapSet.t(Block.t())
-        ) :: [history()]
+        ) :: history()
   def newNeighborsOnly(neighbors, explored) do
     Enum.filter(neighbors, fn {block, _} ->
       not MapSet.member?(explored, block)

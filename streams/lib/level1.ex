@@ -14,7 +14,7 @@ defmodule Level1 do
   @spec vector() :: [[binary()]]
   def vector, do: StringParserTerrain.vector(level())
 
-  @spec terrain() :: (Pos.t() -> boolean())
+  @spec terrain() :: GameDef.terrain()
   def terrain, do: StringParserTerrain.terrain(vector())
 
   @spec startPos() :: Pos.t()
