@@ -24,7 +24,7 @@ defmodule GameDef do
   @typedoc """
   In Bloxorz, we can move left, right, Up or down.
   """
-  @type move :: :LEFT | :RIGHT | :UP | :DOWN
+  @type move :: :left | :right | :up | :down
 
   @typedoc """
   The block at the start position of

@@ -11,7 +11,7 @@ defmodule Solver do
       that was executed, i.e. the last move that was performed for
       the block to end up at position
       """
-      @type moves :: [Move.t()]
+      @type moves :: [GameDef.move()]
       @type history() :: Enumerable.t({Block.t(), moves()})
 
       @doc """
@@ -84,7 +84,7 @@ defmodule Solver do
       """
       @spec from(history(), MapSet.t()) :: history()
 
-      def from([], _, _) do
+      def from([], _) do
         []
       end
 

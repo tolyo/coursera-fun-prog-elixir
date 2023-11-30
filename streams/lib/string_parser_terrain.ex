@@ -1,4 +1,5 @@
 defmodule StringParserTerrain do
+  @spec terrainFunction(any()) :: GameDef.terrain()
   def terrainFunction(level_vector) do
     fn %Pos{row: row, col: col} ->
       try do
@@ -14,7 +15,7 @@ defmodule StringParserTerrain do
   terrain described by `level_vector`. You can assume that the `c`
   appears exactly once in the terrain.
   """
-  @spec findChar(Char.t(), [[String.t()]]) :: Pos.t()
+  @spec findChar(String.t(), [[String.t()]]) :: Pos.t()
   def findChar(c, level_vector) do
     {row, col} =
       Enum.reduce_while(level_vector, {0, nil}, fn line, {row, col} ->
@@ -33,7 +34,7 @@ defmodule StringParserTerrain do
     |> Enum.map(&String.graphemes/1)
   end
 
-  @spec terrain([[String.t()]]) :: Terrain.t()
+  @spec terrain([[String.t()]]) :: GameDef.terrain()
   def terrain(level_vector), do: terrainFunction(level_vector)
 
   @spec startPos([[String.t()]]) :: Pos.t()

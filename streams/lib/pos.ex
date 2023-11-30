@@ -18,7 +18,7 @@ defmodule Pos do
     row
   """
 
-  @type t :: %Pos{
+  @type t :: %__MODULE__{
           row: non_neg_integer(),
           col: non_neg_integer()
         }
