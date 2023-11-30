@@ -80,20 +80,27 @@ defmodule Solver do
     of different paths - the implementation should naturally
     construct the correctly sorted lazy list.
   """
-  @spec from([history()], MapSet.t(), Terrain.t()) :: [history()]
+  @spec from(history(), MapSet.t(), GameDef.terrain()) :: history()
 
-  def from([], _, _) do [] end
+  def from([], _, _) do
+    []
+  end
+
   def from(initial, explored, terrain) do
-    more = for {path, _} <- initial, {next, _} <- newNeighborsOnly(neighborsWithHistory(path, path.history, terrain), explored) do
-      {next, :not_used}
-    end
+    more =
+      for {path, _} <- initial,
+          {next, _} <-
+            newNeighborsOnly(neighborsWithHistory(path, path.history, terrain), explored) do
+        {next, :not_used}
+      end
+
     initial ++ from(more, MapSet.put(explored, Enum.map(more, &elem(&1, 0))), terrain)
   end
 
   @doc """
     The lazy list of all paths that begin at the starting block.
   """
-  @spec pathsFromStart(Terrain.t()) :: [{Block.t(), [Move.t()]}]
+  @spec pathsFromStart(history()) :: history()
   def pathsFromStart(terrain) do
     from([{{terrain.startBlock(), %{}}, []}], MapSet.new(), terrain)
   end
@@ -102,7 +109,7 @@ defmodule Solver do
     Returns a lazy list of all possible pairs of the goal block along
     with the history how it was reached.
   """
-  @spec pathsToGoal(Terrain.t()) :: [{Block.t(), [Move.t()]}]
+  @spec pathsToGoal(GameDef.terrain()) :: history()
   def pathsToGoal(terrain) do
     Enum.filter(pathsFromStart(terrain), fn {block, _} -> done(block, terrain.goal()) end)
   end
@@ -115,7 +122,7 @@ defmodule Solver do
     the first move that the player should perform from the starting
     position.
   """
-  @spec solution(Terrain.t()) :: [{Block.t(), [Move.t()]}]
+  @spec solution(GameDef.terrain()) :: history()
   def solution(terrain) do
     if Enum.empty?(pathsToGoal(terrain)) do
       []
