@@ -1,5 +1,4 @@
 defmodule Solver do
-
   @type history() :: Stream.t({Block.t(), [Move.t()]})
   @moduledoc """
     This component implements the solver
@@ -13,7 +12,6 @@ defmodule Solver do
   def done(%Block{b1: b1, b2: b2}, goal) do
     b1 == goal && b2 == goal
   end
-
 
   @doc """
     This function takes two arguments: the current block `b` and
@@ -35,7 +33,7 @@ defmodule Solver do
   def neighborsWithHistory(block, history, terrain) do
     Block.legalNeighbors(block, terrain)
     |> Enum.map(fn {neighbor, move} -> {neighbor, [move | history]} end)
-    |> Stream.map(&(&1))
+    |> Stream.map(& &1)
   end
 
   @doc """
@@ -43,13 +41,15 @@ defmodule Solver do
     positions that have already been explored. We will use it to
     make sure that we don't explore circular paths.
   """
-  @spec newNeighborsOnly([history()],
-    MapSet.t(Block.t())) :: [history()]
+  @spec newNeighborsOnly(
+          [history()],
+          MapSet.t(Block.t())
+        ) :: [history()]
   def newNeighborsOnly(neighbors, explored) do
     Enum.filter(neighbors, fn {block, _} ->
       not MapSet.member?(explored, block)
     end)
-    |> Stream.map(&(&1))
+    |> Stream.map(& &1)
   end
 
   @doc """
@@ -77,7 +77,10 @@ defmodule Solver do
   """
   @spec from([history()], MapSet.t()) :: [history()]
 
-  def from([], _) do [] end
+  def from([], _) do
+    []
+  end
+
   def from(initial, explored) do
     raise(UndefinedFunctionError)
   end
@@ -109,8 +112,10 @@ defmodule Solver do
   """
   @spec solution() :: [{Block.t(), [Move.t()]}]
   def solution() do
-    if Enum.empty?(pathsToGoal()) do []
-    else elem(Enum.min_by(pathsToGoal(), fn {_, moves} -> length(moves) end), 1)
+    if Enum.empty?(pathsToGoal()) do
+      []
+    else
+      elem(Enum.min_by(pathsToGoal(), fn {_, moves} -> length(moves) end), 1)
     end
   end
 end
