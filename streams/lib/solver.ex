@@ -1,10 +1,16 @@
 defmodule Solver do
-  @type moves :: [Move.t()]
-  @type history() :: Stream.t({Block.t(), moves()})
   @moduledoc """
     This component implements the solver
     for the Bloxorz game
   """
+
+  @typedoc """
+  `history` list is the latest move
+  that was executed, i.e. the last move that was performed for
+  the block to end up at position
+  """
+  @type moves :: [Move.t()]
+  @type history() :: Stream.t({Block.t(), moves()})
 
   @doc """
     Returns `true` if the block `b` is at the final position
@@ -30,7 +36,7 @@ defmodule Solver do
     It should only return valid neighbors, i.e. block positions
     that are inside the terrain.
   """
-  @spec neighborsWithHistory(Block.t(), moves(), Terrain.t()) :: history()
+  @spec neighborsWithHistory(Block.t(), moves(), GameDef.terrain()) :: history()
   def neighborsWithHistory(block, history, terrain) do
     Block.legalNeighbors(block, terrain)
     |> Enum.map(fn {neighbor, move} -> {neighbor, [move | history]} end)
@@ -42,12 +48,10 @@ defmodule Solver do
     positions that have already been explored. We will use it to
     make sure that we don't explore circular paths.
   """
-  @spec newNeighborsOnly(
-          [history()],
-          MapSet.t(Block.t())
-        ) :: history()
+  @spec newNeighborsOnly(history(), MapSet.t(Block.t())) :: history()
   def newNeighborsOnly(neighbors, explored) do
-    Enum.filter(neighbors, fn {block, _} ->
+    neighbors
+    |> Enum.filter(fn {block, _} ->
       not MapSet.member?(explored, block)
     end)
     |> Stream.map(& &1)
