@@ -8,7 +8,6 @@ defmodule Inflevel do
   the shortest path between two positions without terrain
   restrictions.
   """
-
   use Solver
 
   @spec level :: String.t()

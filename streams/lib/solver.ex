@@ -19,8 +19,8 @@ defmodule Solver do
       @doc """
         Returns `true` if the block `b` is at the final position
       """
-      @spec is_final(Block.t(), Pos.t()) :: boolean()
-      def is_final(%Block{b1: b1, b2: b2}, goal) do
+      @spec done(Block.t(), Pos.t()) :: boolean()
+      def done(%Block{b1: b1, b2: b2}, goal) do
         b1 == goal && b2 == goal
       end
 
@@ -115,7 +115,7 @@ defmodule Solver do
       """
       @spec pathsToGoal(GameDef.terrain()) :: history()
       def pathsToGoal(terrain) do
-        Enum.filter(pathsFromStart(terrain), fn {block, _} -> is_final(block, goal()) end)
+        Enum.filter(pathsFromStart(terrain), fn {block, _} -> done(block, goal()) end)
       end
 
       @doc """

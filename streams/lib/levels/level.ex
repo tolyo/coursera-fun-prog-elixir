@@ -14,7 +14,7 @@ defmodule Level do
       def goal, do: StringParserTerrain.goal(vector())
 
       @spec done(Block.t()) :: boolean()
-      def done(b), do: Solver.done(b, goal())
+      def done(b), do: done(b, goal())
     end
   end
 end
