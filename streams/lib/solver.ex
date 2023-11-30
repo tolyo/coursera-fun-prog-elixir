@@ -104,7 +104,7 @@ defmodule Solver do
       """
       @spec pathsFromStart(history()) :: history()
       def pathsFromStart(terrain) do
-        from([{{terrain.startBlock(), %{}}, []}], MapSet.new(), terrain)
+        from([{startBlock(), []}], MapSet.new(), terrain)
       end
 
       @doc """

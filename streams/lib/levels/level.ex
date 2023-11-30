@@ -15,6 +15,9 @@ defmodule Level do
 
       @spec done(Block.t()) :: boolean()
       def done(b), do: done(b, goal())
+
+      @spec startBlock() :: GameDef.startBlock()
+      def startBlock(), do: fn -> Block.init(startPos(), startPos()) end
     end
   end
 end

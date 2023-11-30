@@ -18,4 +18,7 @@ defmodule Inflevel do
 
   @spec terrain() :: GameDef.terrain()
   def terrain(), do: fn _ -> true end
+
+  @spec startBlock() :: GameDef.startBlock()
+  def startBlock(), do: fn -> Block.init(startPos(), startPos()) end
 end
