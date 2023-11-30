@@ -29,7 +29,6 @@ defmodule StreamsTest do
       """
 
     testVector = StringParserTerrain.vector(level)
-    terrain = StringParserTerrain.terrainFunction(testVector)
     assert StringParserTerrain.findChar("S", testVector) == %Pos{row: 0, col: 0}
     assert StringParserTerrain.findChar("T", testVector) == %Pos{row: 0, col: 1}
   end
@@ -68,14 +67,10 @@ defmodule StreamsTest do
   end
 
   test "neighbors with history" do
-    testVector = Level1.vector()
-    terrain = StringParserTerrain.terrainFunction(testVector)
-
     result =
-      Solver.neighborsWithHistory(
+      Level1.neighborsWithHistory(
         %Block{b1: %Pos{row: 1, col: 1}, b2: %Pos{row: 1, col: 1}},
-        [:left, :up],
-        terrain
+        [:left, :up]
       )
       |> Enum.to_list()
 
@@ -101,7 +96,7 @@ defmodule StreamsTest do
         %Block{b1: %Pos{row: 1, col: 1}, b2: %Pos{row: 1, col: 1}}
       ])
 
-    result = Solver.newNeighborsOnly(neighbors, explored) |> Enum.to_list()
+    result = Level1.newNeighborsOnly(neighbors, explored) |> Enum.to_list()
 
     test_result = [
       {%Block{b1: %Pos{row: 2, col: 1}, b2: %Pos{row: 3, col: 1}}, [:down, :left, :up]}

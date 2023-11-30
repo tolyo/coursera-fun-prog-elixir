@@ -38,9 +38,9 @@ defmodule Solver do
         It should only return valid neighbors, i.e. block positions
         that are inside the terrain.
       """
-      @spec neighborsWithHistory(Block.t(), moves(), GameDef.terrain()) :: history()
-      def neighborsWithHistory(block, history, terrain) do
-        Block.legalNeighbors(block, terrain)
+      @spec neighborsWithHistory(Block.t(), moves()) :: history()
+      def neighborsWithHistory(block, history) do
+        Block.legalNeighbors(block, terrain())
         |> Enum.map(fn {neighbor, move} -> {neighbor, [move | history]} end)
         |> Stream.map(& &1)
       end
@@ -82,38 +82,38 @@ defmodule Solver do
         of different paths - the implementation should naturally
         construct the correctly sorted lazy list.
       """
-      @spec from(history(), MapSet.t(), GameDef.terrain()) :: history()
+      @spec from(history(), MapSet.t()) :: history()
 
       def from([], _, _) do
         []
       end
 
-      def from(initial, explored, terrain) do
+      def from(initial, explored) do
         more =
           for {path, _} <- initial,
               {next, _} <-
-                newNeighborsOnly(neighborsWithHistory(path, path.history, terrain), explored) do
+                newNeighborsOnly(neighborsWithHistory(path, path.history), explored) do
             {next, :not_used}
           end
 
-        initial ++ from(more, MapSet.put(explored, Enum.map(more, &elem(&1, 0))), terrain)
+        initial ++ from(more, MapSet.put(explored, Enum.map(more, &elem(&1, 0))))
       end
 
       @doc """
         The lazy list of all paths that begin at the starting block.
       """
-      @spec pathsFromStart(history()) :: history()
-      def pathsFromStart(terrain) do
-        from([{startBlock(), []}], MapSet.new(), terrain)
+      @spec pathsFromStart() :: history()
+      def pathsFromStart() do
+        from([{startBlock(), []}], MapSet.new())
       end
 
       @doc """
         Returns a lazy list of all possible pairs of the goal block along
         with the history how it was reached.
       """
-      @spec pathsToGoal(GameDef.terrain()) :: history()
-      def pathsToGoal(terrain) do
-        Enum.filter(pathsFromStart(terrain), fn {block, _} -> done(block, goal()) end)
+      @spec pathsToGoal() :: history()
+      def pathsToGoal() do
+        Enum.filter(pathsFromStart(), fn {block, _} -> done(block, goal()) end)
       end
 
       @doc """
@@ -126,10 +126,10 @@ defmodule Solver do
       """
       @spec solution() :: history()
       def solution() do
-        if Enum.empty?(pathsToGoal(terrain())) do
+        if Enum.empty?(pathsToGoal()) do
           []
         else
-          elem(Enum.min_by(pathsToGoal(terrain()), fn {_, moves} -> length(moves) end), 1)
+          elem(Enum.min_by(pathsToGoal(), fn {_, moves} -> length(moves) end), 1)
         end
       end
     end
