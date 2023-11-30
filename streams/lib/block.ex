@@ -15,7 +15,7 @@ defmodule Block do
   of `b1` and `b2` are changed by `d1` and `d2`,
   respectively.
   """
-  @spec deltaRow(Block.t(), non_neg_integer(), non_neg_integer()) :: Block.t()
+  @spec deltaRow(Block.t(), integer(), integer()) :: Block.t()
   def deltaRow(block, d1, d2) do
     %Block{
       b1: Pos.deltaRow(block.b1, d1),
@@ -27,7 +27,7 @@ defmodule Block do
   Returns a block where the `col` coordinates of `b1` and `b2` are
   changed by `d1` and `d2`, respectively.
   """
-  @spec deltaCol(Block.t(), non_neg_integer(), non_neg_integer()) :: Block.t()
+  @spec deltaCol(Block.t(), integer(), integer()) :: Block.t()
   def deltaCol(block, d1, d2) do
     Block.init(
       Pos.deltaColumn(block.b1, d1),

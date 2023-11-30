@@ -19,24 +19,24 @@ defmodule Pos do
   """
 
   @type t :: %__MODULE__{
-          row: non_neg_integer(),
-          col: non_neg_integer()
-        }
+    row: integer(),
+    col: integer()
+  }
   defstruct row: nil,
             col: nil
 
-  @spec init(non_neg_integer(), non_neg_integer()) :: Pos.t()
+  @spec init(integer(), integer()) :: Pos.t()
   def init(row, col), do: %Pos{row: row, col: col}
 
   @doc """
     The position obtained by changing the `col` coordinate by `d`
   """
-  @spec deltaColumn(Pos.t(), non_neg_integer()) :: Pos.t()
+  @spec deltaColumn(Pos.t(), integer()) :: Pos.t()
   def deltaColumn(pos, d), do: %{pos | col: pos.col + d}
 
   @doc """
     The position obtained by changing the `row` coordinate by `d`
   """
-  @spec deltaRow(Pos.t(), non_neg_integer()) :: Pos.t()
+  @spec deltaRow(Pos.t(), integer()) :: Pos.t()
   def deltaRow(pos, d), do: %{pos | row: pos.row + d}
 end
