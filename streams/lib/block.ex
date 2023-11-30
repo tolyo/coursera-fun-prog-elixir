@@ -17,10 +17,10 @@ defmodule Block do
   """
   @spec deltaRow(Block.t(), integer(), integer()) :: Block.t()
   def deltaRow(block, d1, d2) do
-    %Block{
-      b1: Pos.deltaRow(block.b1, d1),
-      b2: Pos.deltaRow(block.b2, d2)
-    }
+    Block.init(
+      Pos.deltaRow(block.b1, d1),
+      Pos.deltaRow(block.b2, d2)
+    )
   end
 
   @doc """
