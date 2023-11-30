@@ -31,9 +31,10 @@ defmodule Solver do
   @spec neighborsWithHistory(Block.t(), [Move.t()], Terrain.t()) :: [{Block.t(), [Move.t()]}]
   def neighborsWithHistory(block, history, terrain) do
     ln = Block.legalNeighbors(block, terrain)
-    for {neighbor, move} <- ln do
+    res = for {neighbor, move} <- ln do
       {neighbor, [move | history]}
     end
+    res
   end
 
   @doc """

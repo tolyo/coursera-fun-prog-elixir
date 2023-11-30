@@ -2,30 +2,6 @@ defmodule StreamsTest do
   use ExUnit.Case
   doctest Streams
 
-  defmodule Level1 do
-    @spec level :: String.t()
-    def level do
-      """
-      o0o-------
-      oSoooo----
-      ooooooooo-
-      -ooooooooo
-      -----ooToo
-      ------ooo-
-      """
-    end
-
-    def vector, do: StringParserTerrain.vector(level())
-
-    def terrain, do: StringParserTerrain.terrain(vector())
-
-    def startPos, do: StringParserTerrain.startPos(vector())
-
-    def goal, do: StringParserTerrain.goal(vector())
-
-    def done(b), do: Solver.done(b, goal())
-  end
-
   describe "bloxzor" do
     test "findChar level 1" do
       pos = Level1.startPos()
