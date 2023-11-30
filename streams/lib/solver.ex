@@ -124,12 +124,12 @@ defmodule Solver do
         the first move that the player should perform from the starting
         position.
       """
-      @spec solution(GameDef.terrain()) :: history()
-      def solution(terrain) do
-        if Enum.empty?(pathsToGoal(terrain)) do
+      @spec solution() :: history()
+      def solution() do
+        if Enum.empty?(pathsToGoal(terrain())) do
           []
         else
-          elem(Enum.min_by(pathsToGoal(terrain), fn {_, moves} -> length(moves) end), 1)
+          elem(Enum.min_by(pathsToGoal(terrain()), fn {_, moves} -> length(moves) end), 1)
         end
       end
     end
