@@ -10,17 +10,6 @@ defmodule Inflevel do
   """
   use Solver
 
-  @spec level :: String.t()
-  def level do
-    """
-    -----
-    --ST--
-    --oo--
-    --oo--
-    ------
-    """
-  end
-
   @spec startPos() :: Pos.t()
   def startPos, do: Pos.init(1, 3)
 

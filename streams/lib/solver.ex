@@ -1,5 +1,4 @@
 defmodule Solver do
-
   @moduledoc """
     This component implements the solver
     for the Bloxorz game
@@ -7,7 +6,6 @@ defmodule Solver do
 
   defmacro __using__(_) do
     quote do
-
       @typedoc """
       `history` list is the latest move
       that was executed, i.e. the last move that was performed for
