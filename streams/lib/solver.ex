@@ -1,4 +1,6 @@
 defmodule Solver do
+
+  @type history() :: Stream.t({Block.t(), [Move.t()]})
   @moduledoc """
     This component implements the solver
     for the Bloxorz game
@@ -11,6 +13,7 @@ defmodule Solver do
   def done(%Block{b1: b1, b2: b2}, goal) do
     b1 == goal && b2 == goal
   end
+
 
   @doc """
     This function takes two arguments: the current block `b` and
@@ -28,13 +31,11 @@ defmodule Solver do
     It should only return valid neighbors, i.e. block positions
     that are inside the terrain.
   """
-  @spec neighborsWithHistory(Block.t(), [Move.t()], Terrain.t()) :: [{Block.t(), [Move.t()]}]
+  @spec neighborsWithHistory(Block.t(), [Move.t()], Terrain.t()) :: history()
   def neighborsWithHistory(block, history, terrain) do
-    ln = Block.legalNeighbors(block, terrain)
-    res = for {neighbor, move} <- ln do
-      {neighbor, [move | history]}
-    end
-    res
+    Block.legalNeighbors(block, terrain)
+    |> Enum.map(fn {neighbor, move} -> {neighbor, [move | history]} end)
+    |> Stream.map(&(&1))
   end
 
   @doc """
@@ -42,11 +43,13 @@ defmodule Solver do
     positions that have already been explored. We will use it to
     make sure that we don't explore circular paths.
   """
-  @spec newNeighborsOnly([{Block.t(), [Move.t()]}], MapSet.t()) :: [{Block.t(), [Move.t()]}]
+  @spec newNeighborsOnly([history()],
+    MapSet.t(Block.t())) :: [history()]
   def newNeighborsOnly(neighbors, explored) do
     Enum.filter(neighbors, fn {block, _} ->
       not MapSet.member?(explored, block)
     end)
+    |> Stream.map(&(&1))
   end
 
   @doc """
@@ -72,7 +75,7 @@ defmodule Solver do
     of different paths - the implementation should naturally
     construct the correctly sorted lazy list.
   """
-  @spec from([{Block.t(), [Move.t()]}], MapSet.t()) :: [{Block.t(), [Move.t()]}]
+  @spec from([history()], MapSet.t()) :: [history()]
 
   def from([], _) do [] end
   def from(initial, explored) do

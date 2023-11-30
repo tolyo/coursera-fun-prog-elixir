@@ -1,17 +1,16 @@
 defmodule Block do
-
   @type t :: %Block{
-      b1: Pos.t(),
-      b2: Pos.t()
-  }
+          b1: Pos.t(),
+          b2: Pos.t()
+        }
   defstruct b1: nil,
             b2: nil
 
   @spec init(Pos.t(), Pos.t()) :: Block.t()
-  def init(b1, b2) when
-    b1.row <= b2.row and
-    b1.col <= b2.col, do:
-      %Block{b1: b1, b2: b2}
+  def init(b1, b2)
+      when b1.row <= b2.row and
+             b1.col <= b2.col,
+      do: %Block{b1: b1, b2: b2}
 
   @doc """
     Returns a block where the `row` coordinates
@@ -38,7 +37,6 @@ defmodule Block do
     )
   end
 
-
   @doc """
     The block obtained by moving left
   """
@@ -47,10 +45,12 @@ defmodule Block do
     case isStanding(block) do
       true ->
         block |> deltaCol(-2, -1)
+
       _ ->
         case block.b1.row == block.b2.row do
           true ->
             block |> deltaCol(-1, -2)
+
           false ->
             block |> deltaCol(-1, -1)
         end
@@ -65,10 +65,12 @@ defmodule Block do
     case isStanding(block) do
       true ->
         block |> deltaCol(1, 2)
+
       _ ->
         case block.b1.row == block.b2.row do
           true ->
             block |> deltaCol(2, 1)
+
           false ->
             block |> deltaCol(1, 1)
         end
@@ -83,17 +85,19 @@ defmodule Block do
     case isStanding(block) do
       true ->
         block |> deltaRow(-2, -1)
+
       _ ->
         case block.b1.row == block.b2.row do
           true ->
             block |> deltaRow(-1, -1)
+
           false ->
             block |> deltaRow(-1, -2)
         end
     end
   end
 
-   @doc """
+  @doc """
     The block obtained by moving down
   """
   @spec down(Block.t()) :: Block.t()
@@ -101,10 +105,12 @@ defmodule Block do
     case isStanding(block) do
       true ->
         block |> deltaRow(1, 2)
+
       _ ->
         case block.b1.row == block.b2.row do
           true ->
             block |> deltaRow(1, 1)
+
           false ->
             block |> deltaRow(2, 1)
         end
@@ -129,7 +135,7 @@ defmodule Block do
     Returns the list of positions reachable from the current block
   which are inside the terrain.
   """
-   @spec legalNeighbors(Block.t(), Terrain.t()) :: [{Block.t(), GameDef.move()}]
+  @spec legalNeighbors(Block.t(), Terrain.t()) :: [{Block.t(), GameDef.move()}]
   def legalNeighbors(%Block{} = block, terrain) do
     block
     |> neighbors()
@@ -151,5 +157,4 @@ defmodule Block do
   def isLegal(%Block{b1: b1, b2: b2}, terrain) do
     terrain.(b1) && terrain.(b2)
   end
-
 end

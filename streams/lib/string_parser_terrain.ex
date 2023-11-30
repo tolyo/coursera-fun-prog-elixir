@@ -1,5 +1,4 @@
 defmodule StringParserTerrain do
-
   def terrainFunction(level_vector) do
     fn %Pos{row: row, col: col} ->
       try do
@@ -46,7 +45,7 @@ defmodule StringParserTerrain do
   defp validRow(row, level_vector) when row >= 0 and row < length(level_vector), do: true
   defp validRow(_, _), do: false
 
-  defp validCol(row, col, level_vector) when col >= 0 and col < length(hd(level_vector)),
+  defp validCol(_, col, level_vector) when col >= 0 and col < length(hd(level_vector)),
     do: true
 
   defp validCol(_, _, _), do: false

@@ -1,5 +1,4 @@
 defmodule GameDef do
-
   @typedoc """
     The position where the block is located initially.
     This value is left abstract, it will be defined in concrete
@@ -33,5 +32,4 @@ defmodule GameDef do
   """
   @spec startBlock() :: Block.t()
   def startBlock(), do: raise(UndefinedFunctionError)
-
 end

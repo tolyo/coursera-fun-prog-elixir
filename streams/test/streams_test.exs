@@ -77,6 +77,7 @@ defmodule StreamsTest do
         [:left, :up],
         terrain
       )
+      |> Enum.to_list()
 
     test_set = [
       {%Block{b1: %Pos{row: 1, col: 2}, b2: %Pos{row: 1, col: 3}}, [:right, :left, :up]},
@@ -100,7 +101,7 @@ defmodule StreamsTest do
         %Block{b1: %Pos{row: 1, col: 1}, b2: %Pos{row: 1, col: 1}}
       ])
 
-    result = Solver.newNeighborsOnly(neighbors,explored)
+    result = Solver.newNeighborsOnly(neighbors, explored) |> Enum.to_list()
 
     test_result = [
       {%Block{b1: %Pos{row: 2, col: 1}, b2: %Pos{row: 3, col: 1}}, [:down, :left, :up]}
