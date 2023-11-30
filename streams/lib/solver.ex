@@ -90,9 +90,9 @@ defmodule Solver do
 
       def from(initial, explored) do
         more =
-          for {path, _} <- initial,
+          for {path, history} <- initial,
               {next, _} <-
-                newNeighborsOnly(neighborsWithHistory(path, path.history), explored) do
+                newNeighborsOnly(neighborsWithHistory(path, history), explored) do
             {next, :not_used}
           end
 
@@ -104,7 +104,7 @@ defmodule Solver do
       """
       @spec pathsFromStart() :: history()
       def pathsFromStart() do
-        from([{startBlock(), []}], MapSet.new())
+        from([{startBlock().(), []}], MapSet.new())
       end
 
       @doc """
