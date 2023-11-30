@@ -76,31 +76,31 @@ defmodule Solver do
     of different paths - the implementation should naturally
     construct the correctly sorted lazy list.
   """
-  @spec from([history()], MapSet.t()) :: [history()]
+  @spec from([history()], MapSet.t(), Terrain.t()) :: [history()]
 
-  def from([], _) do
-    []
-  end
-
-  def from(initial, explored) do
-    raise(UndefinedFunctionError)
+  def from([], _, _) do [] end
+  def from(initial, explored, terrain) do
+    more = for {path, _} <- initial, {next, _} <- newNeighborsOnly(neighborsWithHistory(path, path.history, terrain), explored) do
+      {next, :not_used}
+    end
+    initial ++ from(more, MapSet.put(explored, Enum.map(more, &elem(&1, 0))), terrain)
   end
 
   @doc """
     The lazy list of all paths that begin at the starting block.
   """
-  @spec pathsFromStart() :: [{Block.t(), [Move.t()]}]
-  def pathsFromStart() do
-    raise(UndefinedFunctionError)
+  @spec pathsFromStart(Terrain.t()) :: [{Block.t(), [Move.t()]}]
+  def pathsFromStart(terrain) do
+    from([{{terrain.startBlock(), %{}}, []}], MapSet.new(), terrain)
   end
 
   @doc """
     Returns a lazy list of all possible pairs of the goal block along
     with the history how it was reached.
   """
-  @spec pathsToGoal() :: [{Block.t(), [Move.t()]}]
-  def pathsToGoal() do
-    raise(UndefinedFunctionError)
+  @spec pathsToGoal(Terrain.t()) :: [{Block.t(), [Move.t()]}]
+  def pathsToGoal(terrain) do
+    Enum.filter(pathsFromStart(terrain), fn {block, _} -> done(block, terrain.goal()) end)
   end
 
   @doc """
@@ -111,12 +111,12 @@ defmodule Solver do
     the first move that the player should perform from the starting
     position.
   """
-  @spec solution() :: [{Block.t(), [Move.t()]}]
-  def solution() do
-    if Enum.empty?(pathsToGoal()) do
+  @spec solution(Terrain.t()) :: [{Block.t(), [Move.t()]}]
+  def solution(terrain) do
+    if Enum.empty?(pathsToGoal(terrain)) do
       []
     else
-      elem(Enum.min_by(pathsToGoal(), fn {_, moves} -> length(moves) end), 1)
+      elem(Enum.min_by(pathsToGoal(terrain), fn {_, moves} -> length(moves) end), 1)
     end
   end
 end
