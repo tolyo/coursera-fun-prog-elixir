@@ -10,14 +10,14 @@ defmodule StreamsTest do
   end
 
   test "terrainFunction function" do
-    with {testVector, _} <- Level1.vector() do
-      func = StringParserTerrain.terrainFunction(testVector)
-      assert func.(%Pos{row: 0, col: 0}) === true
-      assert func.(%Pos{row: -1, col: -1}) === false
-      assert func.(%Pos{row: 4, col: 4}) === false
-      assert func.(%Pos{row: 1, col: 0}) === false
-      assert func.(%Pos{row: 1, col: 1}) === true
-    end
+    testVector = Level1.vector()
+    func = StringParserTerrain.terrainFunction(testVector)
+    assert func.(%Pos{row: 0, col: 0}) === true
+    assert func.(%Pos{row: -1, col: -1}) === false
+    assert func.(%Pos{row: 4, col: 4}) === false
+    assert func.(%Pos{row: 1, col: 0}) === true
+    assert func.(%Pos{row: 1, col: 1}) === true
+    assert func.(%Pos{row: 5, col: 0}) === false
   end
 
   test "findChar function" do
@@ -103,5 +103,8 @@ defmodule StreamsTest do
     ]
 
     assert result === test_result
+  end
+
+  test "solution for level 0" do
   end
 end

@@ -1,9 +1,16 @@
 defmodule StringParserTerrain do
+  @doc """
+  The resulting function should return `true` if the position `pos` is
+  a valid position (not a '-' character) inside the terrain described
+  by `level_vector`.
+  """
   @spec terrainFunction(any()) :: GameDef.terrain()
   def terrainFunction(level_vector) do
     fn %Pos{row: row, col: col} ->
       try do
-        validRow(row, level_vector) && validCol(row, col, level_vector)
+        validRow(row, level_vector) &&
+          validCol(row, col, level_vector) &&
+          Enum.at(Enum.at(level_vector, row), col) !== "-"
       rescue
         _ -> false
       end
