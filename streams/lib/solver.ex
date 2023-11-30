@@ -10,7 +10,7 @@ defmodule Solver do
   the block to end up at position
   """
   @type moves :: [Move.t()]
-  @type history() :: Stream.t({Block.t(), moves()})
+  @type history() :: Enumerable.t({Block.t(), moves()})
 
   @doc """
     Returns `true` if the block `b` is at the final position
