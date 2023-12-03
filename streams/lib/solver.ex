@@ -97,7 +97,7 @@ defmodule Solver do
           end
 #        IO.inspect(explored)
 #        IO.inspect(more)
-        initial ++ from(more, MapSet.put(explored, Enum.map(more, &elem(&1, 0))), curr + 1)
+        Stream.concat(initial, from(more, MapSet.put(explored, Enum.map(more, &elem(&1, 0))), curr + 1))
       end
 
       @doc """
@@ -129,10 +129,11 @@ defmodule Solver do
       """
       @spec solution() :: history()
       def solution() do
-        if Enum.empty?(pathsToGoal()) do
+        res = pathsToGoal()
+        if Enum.empty?(res) do
           []
         else
-          elem(Enum.min_by(pathsToGoal(), fn {_, moves} -> length(moves) end), 1)
+          elem(Enum.min_by(res, fn {_, moves} -> length(moves) end), 1)
         end
       end
     end
