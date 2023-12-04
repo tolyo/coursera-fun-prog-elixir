@@ -94,8 +94,8 @@ defmodule Solver do
         newNeighborsOnly(neighborsWithHistory(path, history), explored) do
             {next, moves}
           end
-        newBlocks = for b <- Enum.map(more, &elem(&1, 0)), reduce: MapSet.new() do acc -> MapSet.put(acc, b) end
-        Stream.concat(initial, from(more, MapSet.union(newBlocks, explored)))
+        allExplored = for b <- Enum.map(more, &elem(&1, 0)), reduce: explored do acc -> MapSet.put(acc, b) end
+        Stream.concat(initial, from(more, allExplored))
       end
 
       @doc """
