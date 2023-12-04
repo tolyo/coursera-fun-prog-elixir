@@ -83,20 +83,17 @@ defmodule Solver do
         construct the correctly sorted lazy list.
       """
       @spec from(history(), MapSet.t(), integer) :: history()
-      def from(_, _, 5) do
+      def from(_, _, 10) do
         []
       end
 
       def from(initial, explored, curr) do
-#        IO.inspect(initial)
         more =
-          for {path, history} <- initial,
-              {next, m} <-
-                newNeighborsOnly(neighborsWithHistory(path, history), explored) do
-            {next, history ++ m}
+        for {path, history} <- initial,
+        {next, m} <-
+        newNeighborsOnly(neighborsWithHistory(path, history), explored) do
+            {next, m}
           end
-#        IO.inspect(explored)
-#        IO.inspect(more)
         Stream.concat(initial, from(more, MapSet.put(explored, Enum.map(more, &elem(&1, 0))), curr + 1))
       end
 
