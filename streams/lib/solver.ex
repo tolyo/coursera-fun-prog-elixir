@@ -82,19 +82,20 @@ defmodule Solver do
         of different paths - the implementation should naturally
         construct the correctly sorted lazy list.
       """
-      @spec from(history(), MapSet.t(), integer) :: history()
-      def from(_, _, 10) do
+      @spec from(history(), MapSet.t()) :: history()
+      def from([], _) do
         []
       end
 
-      def from(initial, explored, curr) do
+      def from(initial, explored) do
         more =
         for {path, history} <- initial,
-        {next, m} <-
+        {next, moves} <-
         newNeighborsOnly(neighborsWithHistory(path, history), explored) do
-            {next, m}
+            {next, moves}
           end
-        Stream.concat(initial, from(more, MapSet.put(explored, Enum.map(more, &elem(&1, 0))), curr + 1))
+        newBlocks = for b <- Enum.map(more, &elem(&1, 0)), reduce: MapSet.new() do acc -> MapSet.put(acc, b) end
+        Stream.concat(initial, from(more, MapSet.union(newBlocks, explored)))
       end
 
       @doc """
@@ -102,9 +103,7 @@ defmodule Solver do
       """
       @spec pathsFromStart() :: history()
       def pathsFromStart() do
-        paths = from([{startBlock().(), []}], MapSet.new(), 0)
-        IO.inspect(paths)
-        paths
+        from([{startBlock().(), []}], MapSet.new())
       end
 
       @doc """
