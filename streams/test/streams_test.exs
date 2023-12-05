@@ -1,6 +1,5 @@
 defmodule StreamsTest do
   use ExUnit.Case
-  doctest Streams
 
   describe "bloxzor" do
     test "findChar level 1" do
@@ -106,5 +105,6 @@ defmodule StreamsTest do
   end
 
   test "solution for level 0" do
+    assert Level1.solution() == [:right, :right, :down, :right, :right, :right, :down]
   end
 end

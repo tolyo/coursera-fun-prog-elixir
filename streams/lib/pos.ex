@@ -19,9 +19,9 @@ defmodule Pos do
   """
 
   @type t :: %__MODULE__{
-    row: integer(),
-    col: integer()
-  }
+          row: integer(),
+          col: integer()
+        }
   defstruct row: nil,
             col: nil
 
