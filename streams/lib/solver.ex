@@ -91,8 +91,8 @@ defmodule Solver do
           end)
 
         allExplored =
-          Enum.reduce(more, explored, fn {board, _}, acc ->
-            MapSet.put(acc, board)
+          Enum.reduce(more, explored, fn {block, _}, acc ->
+            MapSet.put(acc, block)
           end)
 
         Stream.concat(initial, from(more, allExplored))
