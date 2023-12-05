@@ -17,7 +17,10 @@ defmodule Block do
   """
   @spec deltaRow(Block.t(), integer(), integer()) :: Block.t()
   def deltaRow(block, d1, d2) do
-    raise(UndefinedFunctionError)
+    Block.init(
+      Pos.deltaRow(block.b1, d1),
+      Pos.deltaRow(block.b2, d2)
+    )
   end
 
   @doc """
@@ -26,7 +29,10 @@ defmodule Block do
   """
   @spec deltaCol(Block.t(), integer(), integer()) :: Block.t()
   def deltaCol(block, d1, d2) do
-    raise(UndefinedFunctionError)
+    Block.init(
+      Pos.deltaColumn(block.b1, d1),
+      Pos.deltaColumn(block.b2, d2)
+    )
   end
 
   @doc """
@@ -34,7 +40,19 @@ defmodule Block do
   """
   @spec left(Block.t()) :: Block.t()
   def left(block) do
-    raise(UndefinedFunctionError)
+    case isStanding(block) do
+      true ->
+        block |> deltaCol(-2, -1)
+
+      _ ->
+        case block.b1.row == block.b2.row do
+          true ->
+            block |> deltaCol(-1, -2)
+
+          false ->
+            block |> deltaCol(-1, -1)
+        end
+    end
   end
 
   @doc """
@@ -42,7 +60,19 @@ defmodule Block do
   """
   @spec right(Block.t()) :: Block.t()
   def right(block) do
-    raise(UndefinedFunctionError)
+    case isStanding(block) do
+      true ->
+        block |> deltaCol(1, 2)
+
+      _ ->
+        case block.b1.row == block.b2.row do
+          true ->
+            block |> deltaCol(2, 1)
+
+          false ->
+            block |> deltaCol(1, 1)
+        end
+    end
   end
 
   @doc """
@@ -50,7 +80,19 @@ defmodule Block do
   """
   @spec up(Block.t()) :: Block.t()
   def up(block) do
-    raise(UndefinedFunctionError)
+    case isStanding(block) do
+      true ->
+        block |> deltaRow(-2, -1)
+
+      _ ->
+        case block.b1.row == block.b2.row do
+          true ->
+            block |> deltaRow(-1, -1)
+
+          false ->
+            block |> deltaRow(-1, -2)
+        end
+    end
   end
 
   @doc """
@@ -58,7 +100,19 @@ defmodule Block do
   """
   @spec down(Block.t()) :: Block.t()
   def down(block) do
-    raise(UndefinedFunctionError)
+    case isStanding(block) do
+      true ->
+        block |> deltaRow(1, 2)
+
+      _ ->
+        case block.b1.row == block.b2.row do
+          true ->
+            block |> deltaRow(1, 1)
+
+          false ->
+            block |> deltaRow(2, 1)
+        end
+    end
   end
 
   @doc """
