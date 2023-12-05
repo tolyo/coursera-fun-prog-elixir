@@ -86,10 +86,9 @@ defmodule Solver do
 
       def from(initial, explored) do
         more =
-          Enum.map(initial, fn {path, history} ->
+          Enum.flat_map(initial, fn {path, history} ->
             newNeighborsOnly(neighborsWithHistory(path, history), explored)
           end)
-          |> List.flatten()
 
         allExplored =
           Enum.reduce(more, explored, fn {board, _}, acc ->
